@@ -11,6 +11,7 @@ def show_menu():
     print("6. Import data from CSV")
     print("7. Exit menu")
 
+
 def request_grade(subject):
     while True:
         try:
@@ -21,6 +22,7 @@ def request_grade(subject):
                 print("The grade must be between 0 and 100.")
         except ValueError:
             print("Please, enter a valid number.")
+
 
 def collect_student_data():
     print("Enter the info of the student:")
@@ -44,10 +46,12 @@ def collect_student_data():
     }
     return student
 
+
 def add_student():
     student = collect_student_data()
     students.append(student)
     print(f"Student '{student['Name']}' added successfully.")
+
 
 def show_students():
     for index, s in enumerate(students, 1):
@@ -60,6 +64,7 @@ def show_students():
         print(f"Science: {s['Science grade']}")
         print(f"Total Average: {s['Total Average']:.2f}")
 
+
 def show_top_3():
     if len(students) < 3:
         print("Less than 3 students registered")
@@ -69,9 +74,11 @@ def show_top_3():
     for index, s in enumerate(top_3, 1):
         print(f"{index}. {s['Name']}, Total Average: {s['Total Average']:.2f}")
 
+
 def get_general_average():
     general_average = sum(s['Total Average'] for s in students)/len(students)
     print(f"Overall average for all students {general_average:.2f}")
+
 
 def export_csv(file_name, data, headers):
     with open(file_name, "w", encoding="utf-8") as file:
@@ -79,6 +86,7 @@ def export_csv(file_name, data, headers):
         writer.writeheader()
         writer.writerows(data)
     print("Data successfully exported to CSV.")
+
 
 def importar_csv(file_name):
     try:
