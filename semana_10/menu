@@ -7,7 +7,7 @@ from actions import (
 from data import export_csv, import_csv
 
 def show_menu_and_execute(student_list):
-    print("\n📚 Main Menu:")
+    print("Main Menu:")
     print("1. Add a new student")
     print("2. Show all students")
     print("3. Show top 3 averages")
@@ -31,7 +31,7 @@ def show_menu_and_execute(student_list):
     elif option == "6":
         import_csv("students.csv", student_list)
     elif option == "7":
-        print("Goodbye!")
+        print("Exit")
         return False
     else:
         print("Invalid option. Please choose a number between 1 and 7.")
