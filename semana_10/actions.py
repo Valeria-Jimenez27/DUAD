@@ -40,7 +40,7 @@ def show_students(student_list):
         return
 
     for index, s in enumerate(student_list, 1):
-        print(f"Student {index}:")
+        print(f"\nStudent {index}:")
         print(f"Name: {s['Name']}")
         print(f"Classroom: {s['Classroom']}")
         print(f"Spanish: {s['Spanish grade']}")
