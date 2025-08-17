@@ -13,7 +13,7 @@ class User:
 def adult(func):
     def wrapper(user):
         if user.age < 18:
-            return f"{user.age}: Access denied, is not an adult"
+            raise PermissionError(f"{user.age}: Access denied, is not an adult")
         return func(user)
     return wrapper
 
@@ -21,6 +21,10 @@ def adult(func):
 def enter_a_bar(user):
     return f"{user.age}: You are allowed to enter"
 
-print(enter_a_bar(User(date(1998, 1, 27))))
-print(enter_a_bar(User(date(2008, 10, 7))))
+
+try:
+    print(enter_a_bar(User(date(1998, 1, 27))))
+    print(enter_a_bar(User(date(2008, 10, 7))))
+except PermissionError:
+    print("Access denied")
 
