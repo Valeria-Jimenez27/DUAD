@@ -28,6 +28,10 @@ class Stack:
         return popped
 
 stack = Stack()
+try:
+    stack.pop()
+except IndexError as e:
+    print(f"Error: {e}")
 
 print("Adding the third node to the stack:")
 stack.push(Node("Hi, I'm the third node"))

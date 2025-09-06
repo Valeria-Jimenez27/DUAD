@@ -18,6 +18,10 @@ class Binary_Tree:
         self.root=new_node      
 
 binary_tree=Binary_Tree()
+try:
+    binary_tree.print_binary_tree(binary_tree.root)
+except IndexError as e:
+    print(f"Error: {e}")    
 
 binary_tree.structure_root(Node("A"))
 binary_tree.root.left=Node("B")
