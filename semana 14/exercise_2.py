@@ -36,7 +36,7 @@ class Double_Ended_Queue:
 
     def pop_left(self):
         if self.head is None:
-            return None
+            raise IndexError("Pop left from empty deque")
         popped= self.head
         self.head=self.head.next
         if self.head is None:
@@ -46,19 +46,28 @@ class Double_Ended_Queue:
 
     def pop_right(self):
         if self.tail is None:
-            return None
+            raise IndexError("Pop right from empty deque")  
         popped= self.tail
         if self.head==self.tail:
             self.head=self.tail =None
         else:
             current=self.head
-            while current.next== self.tail:
+            while current.next!= self.tail:
                 current=current.next
             current.next=None
             self.tail =current
         return popped
 
 double_ended_queue = Double_Ended_Queue()
+try:
+    double_ended_queue.pop_left()
+except IndexError as e:
+    print(f"Error: {e}")
+
+try:
+    double_ended_queue.pop_right()      
+except IndexError as e:
+    print(f"Error: {e}")
 
 double_ended_queue.push_right(Node("3"))
 double_ended_queue.push_right(Node("2"))

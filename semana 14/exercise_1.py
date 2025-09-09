@@ -22,12 +22,16 @@ class Stack:
 
     def pop(self):
         if self.head is None:
-            return None
+            raise IndexError("Pop from empty stack")
         popped = self.head
         self.head = self.head.next
         return popped
 
 stack = Stack()
+try:
+    stack.pop()
+except IndexError as e:
+    print(f"Error: {e}")
 
 print("Adding the third node to the stack:")
 stack.push(Node("Hi, I'm the third node"))
