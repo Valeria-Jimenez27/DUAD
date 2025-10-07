@@ -18,3 +18,12 @@ def test_prime_number_False():
     result=prime_number(number)
     #assert
     assert result==expected_result
+
+def test_prime_number_negative():
+    #arrange
+    number=-8
+    expected_result=False
+    #act
+    result=prime_number(number)
+    #assert
+    assert result==expected_result
