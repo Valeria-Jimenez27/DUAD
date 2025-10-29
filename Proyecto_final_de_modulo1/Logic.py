@@ -12,12 +12,12 @@ class FinancialManager:
 
 
     def add_category(self, category):
-        if not category:
-            raise ValueError("Category cannot be empty.")
-        if category in self.categories:
+        if not category or not category.strip():
+            raise ValueError("Category cannot be empty or blank space.")
+        if category.strip() in self.categories:
             raise ValueError("Category already exists.")
         
-        self.categories.append(category)
+        self.categories.append(category.strip())
         DataStorage.save_categories(self.categories, self.categories_file)
 
 

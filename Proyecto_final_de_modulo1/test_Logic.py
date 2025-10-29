@@ -79,3 +79,11 @@ def test_add_multiple_movements():
     manager.add_movement("Ice cream", 2000, "Groceries", "27-10-2025", "Expense")
     #assert
     assert len(manager.datastorage)==2
+
+def test_add_category_blank_space():
+    #arrange
+    manager=FinancialManager()
+    manager.categories=[]
+    #act y #assert
+    with pytest.raises (ValueError):
+        manager.add_category("    ")
