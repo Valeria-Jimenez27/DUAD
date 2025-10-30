@@ -87,3 +87,11 @@ def test_add_category_blank_space():
     #act y #assert
     with pytest.raises (ValueError):
         manager.add_category("    ")
+
+def test_add_movement_blank_space():
+    #arrange
+    manager=FinancialManager()
+    manager.categories =["Groceries"]
+    #act y #assert
+    with pytest.raises(ValueError, match="Please fill in all the fields"):
+        manager.add_movement("   ", 93000, "Groceries", "29-10-2025", "Expense")

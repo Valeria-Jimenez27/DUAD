@@ -24,8 +24,8 @@ class FinancialManager:
     def add_movement(self, title, amount, category, date, movement_type):
         if not self.categories:
             raise ValueError("You must add a category before adding movements!")
-        if not all([title, amount, category, date]):
-            raise ValueError("Please fill in all the fields.")
+        if not all([title.strip(), category.strip(), date.strip(), movement_type.strip()]):
+            raise ValueError("Please fill in all the fields correctly (no blank spaces).")
         try:
             amount = float(amount)
             if amount <= 0:
@@ -33,9 +33,10 @@ class FinancialManager:
         except ValueError:
             raise ValueError("Amount must be a valid number.")
         try:
-            datetime.strptime(date, "%d-%m-%Y")
+            datetime.strptime(date.strip(), "%d-%m-%Y")
         except ValueError:
             raise ValueError("Date must be in DD-MM-YYYY format.")
-        new_movement = FinanceStructure(title, amount, category, date, movement_type)
+        new_movement = FinanceStructure(title.strip(), amount, category.strip(), date.strip(), movement_type.strip())
         self.datastorage.append(new_movement.to_dict())
         DataStorage.save_movements(self.datastorage, self.movements_file)
+
