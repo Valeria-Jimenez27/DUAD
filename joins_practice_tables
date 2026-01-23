@@ -1,0 +1,18 @@
+-- List all tables in the database
+SELECT name FROM sqlite_master WHERE type='table';
+-- Get the schema of the all tables
+SELECT sql
+FROM sqlite_master
+WHERE type='table' AND name='Authors';
+
+SELECT sql
+FROM sqlite_master
+WHERE type='table' AND name='Books';
+
+SELECT sql
+FROM sqlite_master
+WHERE type='table' AND name='Customers';
+
+SELECT sql
+FROM sqlite_master
+WHERE type='table' AND name='Rents';
