@@ -1,3 +1,4 @@
+from dataclasses import field
 import json
 from flask import Flask, request, jsonify
 from Data_flask import read_tasks, save_tasks
@@ -19,6 +20,11 @@ def valid_data(data, valid_id=True):
     valid_states = ["pendiente", "en progreso", "completada"]
     if not data:
         return "No hay datos"
+    if valid_id:
+        required_values = ["id", "titulo", "descripcion", "estado"]
+        for value in required_values:
+            if value not in data:
+                return f"El campo '{value}' es obligatorio"
     if valid_id and "id" not in data:
         return "El id es necesario"
     if "titulo" in data and not data["titulo"]:
@@ -48,7 +54,10 @@ def create_task():
     error = valid_data(data)
     if error:
         return jsonify({"error": error}), 400
-
+    try:
+        data["id"] = int(data["id"])
+    except ValueError:
+        return jsonify({"error":"El id debe ser un número entero"}), 400
     if any(t["id"]==data["id"] for t in tasks):
         return jsonify({"error": "El id ya existe"}), 400
 
