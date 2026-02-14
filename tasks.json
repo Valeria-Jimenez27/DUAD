@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "titulo": "Terminar el modulo de Flask",
+        "descripcion": "Practicar en Visual, entender el tema y terminar la tarea",
+        "estado": "en progreso"
+    },
+    {
+        "id": 2,
+        "titulo": "Terminar el modulo de Bases de datos",
+        "descripcion": "Practicar en Visual, entender el tema y terminar la tarea",
+        "estado": "completada"
+    },
+    {
+        "id": 4,
+        "titulo": "Terminar lyfter",
+        "descripcion": "Practicar en, entender los metodos y terminar las tareas",
+        "estado": "pendiente"
+    }
+]

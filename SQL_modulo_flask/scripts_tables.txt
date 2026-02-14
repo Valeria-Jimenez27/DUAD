@@ -1,0 +1,52 @@
+CREATE TABLE IF NOT EXISTS lyfter_car_rental.users (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    estado BOOLEAN NOT NULL
+);
+
+INSERT INTO lyfter_car_rental.users
+(nombre, email, username, password, fecha_nacimiento, estado)
+VALUES
+('Kori', 'kori@mail.com', 'kori01', 'pass123', '1998-01-27', true),
+('Wilburt', 'wilburt@mail.com', 'wilburt02', 'pass123', '1995-05-10', true),
+('Liliane', 'lili@mail.com', 'lili03', 'pass123', '2000-03-22', false);
+-- ... hasta completar los 50 con Mockaroo
+
+
+CREATE TABLE IF NOT EXISTS lyfter_car_rental.cars (
+    id SERIAL PRIMARY KEY,
+    marca VARCHAR(100) NOT NULL,
+    modelo VARCHAR(100) NOT NULL UNIQUE,
+    fecha_fabricacion DATE NOT NULL,
+    estado_automovil BOOLEAN NOT NULL
+);
+
+INSERT INTO lyfter_car_rental.cars 
+(marca, modelo, fecha_fabricacion, estado_automovil)
+VALUES
+('Buick', 'Regal', '2000-01-06', false),
+('Ford', 'Country', '2000-01-23', false),
+('Mercury', 'Cougar', '2002-05-27', false),
+('Chevrolet', 'Colorado', '1991-11-17', false),
+-- ... hasta completar los 50 con Mockaroo
+
+CREATE TABLE IF NOT EXISTS lyfter_car_rental.rentals (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    car_id INTEGER NOT NULL,
+    fecha_alquiler TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado_alquiler VARCHAR(30) NOT NULL,
+
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id)
+        REFERENCES lyfter_car_rental.users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_car
+        FOREIGN KEY (car_id)
+        REFERENCES lyfter_car_rental.cars(id)
+        ON DELETE CASCADE
+);
