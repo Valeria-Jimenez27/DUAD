@@ -1,0 +1,49 @@
+--Un script que agregue un usuario nuevo 
+INSERT INTO lyfter_car_rental.users 
+(nombre, email, username, password, fecha_nacimiento, estado)
+VALUES 
+('Francisco Rojas', 'fran97@email.com', 'franro', '123456', '1995-04-10', true);
+
+--Un script que agregue un automovil nuevo
+INSERT INTO lyfter_car_rental.cars
+(marca, modelo, fecha_fabricacion, estado_automovil)
+VALUES
+('Suzuki', 'Jimny', '2024-05-10', true);
+
+--Un script que cambie el estado de un usuario
+UPDATE lyfter_car_rental.users
+SET estado = false 
+WHERE id = 3;
+
+--Un script que cambie el estado de un automovil
+UPDATE lyfter_car_rental.cars
+SET estado_automovil = false 
+WHERE id = 2;
+
+--Un script que genere un alquiler nuevo con los datos de un usuario y un automovil
+INSERT INTO lyfter_car_rental.rentals
+(user_id, car_id, estado_alquiler)
+VALUES
+(2, 4, 'activo');
+
+UPDATE lyfter_car_rental.cars
+SET estado_automovil = false
+WHERE id = 4;
+
+--Un script que confirme la devolución del auto al completar el alquiler, colocando el auto como disponible y completando el estado del alquiler
+UPDATE lyfter_car_rental.cars
+SET estado_automovil = true
+WHERE id = 4;
+
+UPDATE lyfter_car_rental.rentals
+SET estado_alquiler = 'completado'
+WHERE car_id = 4;
+
+--Un script que deshabilite un automovil del alquiler
+UPDATE lyfter_car_rental.cars
+SET estado_automovil = false
+WHERE id = 3;
+
+--Un script que obtenga todos los automoviles alquilados, y otro que obtenga todos los disponibles.
+SELECT * FROM lyfter_car_rental.cars WHERE estado_automovil = false;
+SELECT * FROM lyfter_car_rental.cars WHERE estado_automovil = true; 
