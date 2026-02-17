@@ -1,42 +1,35 @@
 import psycopg2
+from psycopg2.extras import RealDictCursor
 
 class PgManager:
     def __init__(self, db_name, user, password, host, port=5432):
-        try:
-            self.connection = psycopg2.connect(
-                dbname=db_name,
-                user=user,
-                password=password,
-                host=host,
-                port=port
-            )
-            self.cursor = self.connection.cursor()
-            print("Connection created successfully")
-        except Exception as e:
-            print("Error connecting to the database:", e)
-            self.connection = None
-            self.cursor = None
+        self.db_config = {
+            "dbname": db_name,
+            "user": user,
+            "password": password,
+            "host": host,
+            "port": port
+        }
 
+    def get_connection(self):
+        return psycopg2.connect(**self.db_config)
     def execute(self, query, params=None, fetch=False):
-        if not self.cursor:
-            print("No database connection")
-            return None
+        conn = None
         try:
-            if params:
-                self.cursor.execute(query, params)
-            else:
-                self.cursor.execute(query)
-            result = self.cursor.fetchall() if fetch else None
-            self.connection.commit()
+            conn = self.get_connection()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute(query, params)
+            result = cursor.fetchall() if fetch else None
+            conn.commit()
+            cursor.close()
             return result
         except Exception as e:
-            print("Error executing query:", e)
+            if conn:
+                conn.rollback()
+            print("Database error:", e)
             return None
+        finally:
+            if conn:
+                conn.close()
 
-    def close(self):
-        if self.cursor:
-            self.cursor.close()
-        if self.connection:
-            self.connection.close()
-        print("Connection closed")
 

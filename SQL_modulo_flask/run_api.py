@@ -1,17 +1,38 @@
-from flask import Flask
-from creation_api import creation_bp
-from modification_api import modification_bp
-from listing_api import listing_bp
+from flask import Flask, jsonify
+from users import users_bp
+from cars import cars_bp
+from rentals import rentals_bp
 
-app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return {"message": "API connected successfully"}
+def create_app():
+    app = Flask(__name__)
 
-app.register_blueprint(creation_bp)
-app.register_blueprint(modification_bp)
-app.register_blueprint(listing_bp)
+    @app.route("/")
+    def index():
+        return jsonify({"message": "API is running!"})
+
+    app.register_blueprint(users_bp, url_prefix="/users")
+    app.register_blueprint(cars_bp, url_prefix="/cars")
+    app.register_blueprint(rentals_bp, url_prefix="/rentals")
+
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        return jsonify({
+            "error": "Internal Server Error",
+            "message": str(e)
+        }), 500
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return jsonify({
+            "error": "Not Found",
+            "message": "Endpoint does not exist"
+        }), 404
+
+    return app
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app = create_app()
+    app.run(debug=True, host="localhost", port=5000)
+
