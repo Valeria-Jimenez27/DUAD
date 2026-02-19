@@ -1,102 +1,88 @@
 from flask import Blueprint, request, jsonify
-from base_de_datos import PgManager
-
-
-db = PgManager(
-    db_name="lyfter_car_rental",
-    user="postgres",
-    password="postgres",
-    host="localhost"
-)
+from base_de_datos import db
 
 cars_bp = Blueprint("cars", __name__)
 
-# Repositorio de cars
+
 class CarRepository:
+
     @staticmethod
-    def create_car(car_data):
+    def create(data):
         query = """
-            INSERT INTO lyfter_car_rental.cars (marca, modelo, fecha_fabricacion, estado_automovil)
+            INSERT INTO lyfter_car_rental.cars (brand, model, manufacturing_date, car_status)
             VALUES (%s, %s, %s, %s)
             RETURNING id;
         """
         params = (
-            car_data["marca"],
-            car_data["modelo"],
-            car_data["fecha_fabricacion"],
-            car_data["estado_automovil"]
+            data["brand"],
+            data["model"],
+            data["manufacturing_date"],
+            data["car_status"]
         )
         result = db.execute(query, params, fetch=True)
-        return result[0]["id"] if result else None
-
+        return result[0]["id"]
 
     @staticmethod
-    def update_estado_automovil(car_id, estado_automovil):
-        query = """
-            UPDATE lyfter_car_rental.cars
-            SET estado_automovil = %s
-            WHERE id = %s;
-        """
-        db.execute(query, (estado_automovil, car_id))
+    def update(car_id, fields):
+        query = "UPDATE lyfter_car_rental.cars SET "
+        values = []
+        for key, value in fields.items():
+            query += f"{key} = %s, "
+            values.append(value)
+        query = query.rstrip(", ")
+        query += " WHERE id = %s;"
+        values.append(car_id)
+        db.execute(query, values)
 
+    @staticmethod
+    def get_by_id(car_id):
+        result = db.execute(
+            "SELECT * FROM lyfter_car_rental.cars WHERE id = %s;",
+            (car_id,),
+            fetch=True
+        )
+        return result[0] if result else None
 
     @staticmethod
     def get_all(filters):
         query = "SELECT * FROM lyfter_car_rental.cars WHERE 1=1"
         values = []
-        allowed_filters = [
-            "id", "marca", "modelo",
-            "fecha_fabricacion", "estado_automovil"
-        ]
+        allowed = ["id", "brand", "model", "manufacturing_date", "car_status"]
         for key, value in filters.items():
-            if key in allowed_filters:
+            if key in allowed:
                 query += f" AND {key} = %s"
                 values.append(value)
         return db.execute(query, values, fetch=True)
 
-
-#ENDPOINTS DE CARS
+# Endpoints de cars
 @cars_bp.route("/", methods=["POST"])
-def create_automovil():
+def create_car():
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "Request body is required"}), 400
-        required_fields = [
-            "marca",
-            "modelo",
-            "fecha_fabricacion",
-            "estado_automovil"
-        ]
-        for field in required_fields:
-            if field not in data or not data[field]:
+        required = ["brand", "model", "manufacturing_date", "car_status"]
+        for field in required:
+            if field not in data:
                 return jsonify({"error": f"{field} is required"}), 400
-        car_id = CarRepository.create_car(data)
+        car_id = CarRepository.create(data)
         return jsonify({
             "message": "Car created successfully",
             "car_id": car_id
         }), 201
     except Exception as e:
-        return jsonify({
-            "error": "Error creating car",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
 
-@cars_bp.route("/<int:car_id>/estado_automovil", methods=["PATCH"])
-def update_car_estado_automovil(car_id):
+
+@cars_bp.route("/<int:car_id>", methods=["PATCH"])
+def update_car(car_id):
     try:
+        if not CarRepository.get_by_id(car_id):
+            return jsonify({"error": "Car not found"}), 404
         data = request.get_json()
-        if not data or "estado_automovil" not in data:
-            return jsonify({"error": "estado_automovil is required"}), 400
-        CarRepository.update_estado_automovil(car_id, data["estado_automovil"])
-        return jsonify({
-            "message": "Car estado_automovil updated successfully"
-        }), 200
+        CarRepository.update(car_id, data)
+        return jsonify({"message": "Car updated successfully"}), 200
     except Exception as e:
-        return jsonify({
-            "error": "Error updating car estado_automovil",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
+
 
 @cars_bp.route("/", methods=["GET"])
 def list_cars():
@@ -105,7 +91,4 @@ def list_cars():
         cars = CarRepository.get_all(filters)
         return jsonify(cars), 200
     except Exception as e:
-        return jsonify({
-            "error": "Error listing cars",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500

@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+
 class PgManager:
     def __init__(self, db_name, user, password, host, port=5432):
         self.db_config = {
@@ -13,6 +14,7 @@ class PgManager:
 
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
+
     def execute(self, query, params=None, fetch=False):
         conn = None
         try:
@@ -26,10 +28,19 @@ class PgManager:
         except Exception as e:
             if conn:
                 conn.rollback()
-            print("Database error:", e)
-            return None
+            raise e
         finally:
             if conn:
                 conn.close()
+
+db = PgManager(
+    db_name="postgres",
+    user="postgres",
+    password="postgres",
+    host="localhost"
+)
+
+
+
 
 

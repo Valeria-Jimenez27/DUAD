@@ -15,21 +15,12 @@ def create_app():
     app.register_blueprint(cars_bp, url_prefix="/cars")
     app.register_blueprint(rentals_bp, url_prefix="/rentals")
 
-
-    @app.errorhandler(Exception)
-    def handle_exception(e):
-        return jsonify({
-            "error": "Internal Server Error",
-            "message": str(e)
-        }), 500
-
     @app.errorhandler(404)
     def not_found(e):
         return jsonify({
             "error": "Not Found",
             "message": "Endpoint does not exist"
         }), 404
-
     return app
 
 if __name__ == "__main__":

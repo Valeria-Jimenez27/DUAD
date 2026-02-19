@@ -1,119 +1,112 @@
 from flask import Blueprint, request, jsonify
-from base_de_datos import PgManager
-from datetime import datetime
-
-
-db = PgManager(
-    db_name="lyfter_car_rental",
-    user="postgres",
-    password="postgres",
-    host="localhost"
-)
+from base_de_datos import db
+from cars import CarRepository
+from users import UserRepository
 
 rentals_bp = Blueprint("rentals", __name__)
 
-#Repositorio de rentals
+
 class RentalRepository:
     @staticmethod
-    def create_rental(rental_data):
+    def create(data):
         query = """
-            INSERT INTO lyfter_car_rental.rentals (user_id, car_id, estado_alquiler)
+            INSERT INTO lyfter_car_rental.rentals
+            (user_id, car_id, rental_status)
             VALUES (%s, %s, %s)
             RETURNING id;
         """
         params = (
-            rental_data["user_id"],
-            rental_data["car_id"],
-            rental_data["estado_alquiler"]
+            data["user_id"],
+            data["car_id"],
+            data["rental_status"]
         )
         result = db.execute(query, params, fetch=True)
-        return result[0]["id"] if result else None
-
-
-    @staticmethod
-    def update_estado_alquiler(rental_id, estado_alquiler):
-        query = """
-            UPDATE lyfter_car_rental.rentals
-            SET estado_alquiler = %s
-            WHERE id = %s;
-        """
-        db.execute(query, (estado_alquiler, rental_id))
-
+        return result[0]["id"]
 
     @staticmethod
-    def complete_rental(rental_id):
-        query = """
-            UPDATE lyfter_car_rental.rentals
-            SET estado = 'completado'
-            WHERE id = %s;
-        """
-        db.execute(query, (rental_id,))
+    def update(rental_id, fields):
+        query = "UPDATE lyfter_car_rental.rentals SET "
+        values = []
+        for key, value in fields.items():
+            query += f"{key} = %s, "
+            values.append(value)
+        query = query.rstrip(", ")
+        query += " WHERE id = %s;"
+        values.append(rental_id)
+        db.execute(query, values)
 
+    @staticmethod
+    def get_by_id(rental_id):
+        result = db.execute(
+            "SELECT * FROM lyfter_car_rental.rentals WHERE id = %s;",
+            (rental_id,),
+            fetch=True
+        )
+        return result[0] if result else None
 
     @staticmethod
     def get_all(filters):
         query = "SELECT * FROM lyfter_car_rental.rentals WHERE 1=1"
         values = []
-        allowed_filters = [
-            "id", "user_id", "car_id",
-            "fecha_alquiler", "estado_alquiler"
-        ]
+        allowed = ["id", "user_id", "car_id", "rental_status"]
         for key, value in filters.items():
-            if key in allowed_filters:
+            if key in allowed:
                 query += f" AND {key} = %s"
                 values.append(value)
         return db.execute(query, values, fetch=True)
 
 
-#ENDPOINTS DE RENTALS
+# Endpoints de rentals
 @rentals_bp.route("/", methods=["POST"])
 def create_rental():
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "Request body is required"}), 400
-        required_fields = ["user_id", "car_id", "estado_alquiler"]
-        for field in required_fields:
-            if field not in data or not data[field]:
+        required = ["user_id", "car_id"]
+        for field in required:
+            if field not in data:
                 return jsonify({"error": f"{field} is required"}), 400
-        rental_id = RentalRepository.create_rental(data)
+        if not UserRepository.get_by_id(data["user_id"]):
+            return jsonify({"error": "User not found"}), 404
+        car = CarRepository.get_by_id(data["car_id"])
+        if not car:
+            return jsonify({"error": "Car not found"}), 404
+        if car["car_status"].strip().lower() != "available":
+            return jsonify({"error": "Car not available"}), 400
+        
+        rental_data = {
+            "user_id": data["user_id"],
+            "car_id": data["car_id"],
+            "rental_status": "active"
+        }
+        rental_id = RentalRepository.create(rental_data)
+        CarRepository.update(data["car_id"], {"car_status": "rented"})
         return jsonify({
             "message": f"Rental created successfully with ID: {rental_id}"
         }), 201
-    except Exception as e:
-        return jsonify({
-            "error": "Error creating rental",
-            "details": str(e)
-        }), 500
 
-@rentals_bp.route("/<int:rental_id>/estado_alquiler", methods=["PATCH"])
-def update_rental_estado_alquiler(rental_id):
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+@rentals_bp.route("/<int:rental_id>", methods=["PATCH"])
+def update_rental(rental_id):
     try:
+        rental = RentalRepository.get_by_id(rental_id)
+
+        if not rental:
+            return jsonify({"error": "Rental not found"}), 404
+
         data = request.get_json()
-        if not data or "estado_alquiler" not in data:
-            return jsonify({"error": "estado_alquiler is required"}), 400
-        RentalRepository.update_estado_alquiler(rental_id, data["estado_alquiler"])
-        return jsonify({
-            "message": "Estado_alquiler updated successfully"
-        }), 200
-    except Exception as e:
-        return jsonify({
-            "error": "Error updating rental estado_alquiler",
-            "details": str(e)
-        }), 500
+#Aca comprueblo si se completo el alquiler para cambiar el estado del auto a disponible
+        if "rental_status" in data and data["rental_status"] == "completed":
+            CarRepository.update(rental["car_id"], {"car_status": "available"})
+        RentalRepository.update(rental_id, data)
+        return jsonify({"message": "Rental updated successfully"}), 200
 
-@rentals_bp.route("/<int:rental_id>/complete", methods=["PATCH"])
-def complete_rental(rental_id):
-    try:
-        RentalRepository.complete_rental(rental_id)
-        return jsonify({
-            "message": "Rental completed successfully"
-        }), 200
     except Exception as e:
-        return jsonify({
-            "error": "Error completing rental",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
+
 
 @rentals_bp.route("/", methods=["GET"])
 def list_rentals():
@@ -121,8 +114,6 @@ def list_rentals():
         filters = request.args.to_dict()
         rentals = RentalRepository.get_all(filters)
         return jsonify(rentals), 200
+
     except Exception as e:
-        return jsonify({
-            "error": "Error listing rentals",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
