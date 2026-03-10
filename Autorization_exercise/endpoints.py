@@ -7,15 +7,51 @@ from authorization import token_required, admin_required, generate_token
 api = Blueprint("api", __name__)
 
 
+#Registro de nuevos usuarios y admin
+@api.route("/register", methods=["POST"])
+def register():
+    db = SessionLocal()
+    try:
+        data = request.get_json()
+        if not data or "name" not in data or "email" not in data or "password" not in data:
+            return {"error": "Missing fields"}, 400
+        existing = db.query(User).filter(User.email == data["email"]).first()
+        if existing:
+            return {"error": "User already exists"}, 400
+
+        role = data.get("role", "user")
+
+        new_user = User(
+            name=data["name"],
+            email=data["email"],
+            password=data["password"],
+            role=role
+        )
+        db.add(new_user)
+        db.commit()
+
+        token = generate_token(new_user)
+
+        return {"message": "User created successfully", "token": token}, 201
+    finally:
+        db.close()
+
+
 @api.route("/login", methods=["POST"])
 def login():
     db = SessionLocal()
-    data = request.get_json()
-    user = db.query(User).filter(User.email == data["email"]).first()
-    if not user or user.password != data["password"]:
-        return {"error": "Invalid credentials"}, 401
-    token = generate_token(user)
-    return {"token": token}
+    try:
+        data = request.get_json()
+        if not data or "email" not in data or "password" not in data:
+            return {"error": "Missing fields"}, 400
+        user = db.query(User).filter(User.email == data["email"]).first()
+        if not user or user.password != data["password"]:
+            return {"error": "Invalid credentials"}, 401
+
+        token = generate_token(user)
+        return {"token": token}
+    finally:
+        db.close()
 
 
 #CRUD PRODUCTOS (SOLO ADMIN)
@@ -34,6 +70,7 @@ def create_product():
     db.add(product)
     db.commit()
     return {"message": "Product created"}, 201
+
 
 
 @api.route("/products", methods=["GET"])
