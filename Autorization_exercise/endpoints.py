@@ -7,7 +7,7 @@ from authorization import token_required, admin_required, generate_token
 api = Blueprint("api", __name__)
 
 
-#Registro de nuevos usuarios y admin
+# Registro de nuevos usuarios y admin
 @api.route("/register", methods=["POST"])
 def register():
     db = SessionLocal()
@@ -53,80 +53,157 @@ def login():
     finally:
         db.close()
 
-
-#CRUD PRODUCTOS (SOLO ADMIN)
+#CRUD de productos (solo admin puede crear, actualizar y eliminar)
 @api.route("/products", methods=["POST"])
 @token_required
 @admin_required
 def create_product():
     db = SessionLocal()
-    data = request.get_json()
-    product = Product(
-        name=data["name"],
-        price=data["price"],
-        entry_date=datetime.strptime(data["entry_date"], "%Y-%m-%d").date(),
-        quantity=data["quantity"]
-    )
-    db.add(product)
-    db.commit()
-    return {"message": "Product created"}, 201
-
+    try:
+        data = request.get_json()
+        product = Product(
+            name=data["name"],
+            price=data["price"],
+            entry_date=datetime.strptime(data["entry_date"], "%Y-%m-%d").date(),
+            quantity=data["quantity"]
+        )
+        db.add(product)
+        db.commit()
+        return {"message": "Product created"}, 201
+    finally:
+        db.close()
 
 
 @api.route("/products", methods=["GET"])
 @token_required
 def get_products():
     db = SessionLocal()
-    products = db.query(Product).all()
-    result = []
-    for p in products:
-        result.append({
-            "id": p.id,
-            "name": p.name,
-            "price": p.price,
-            "quantity": p.quantity
-        })
-    return result
+    try:
+        products = db.query(Product).all()
+        result = []
+        for p in products:
+            result.append({
+                "id": p.id,
+                "name": p.name,
+                "price": p.price,
+                "quantity": p.quantity
+            })
+        return result
+    finally:
+        db.close()
+
+
+@api.route("/products/<int:product_id>", methods=["GET"])
+@token_required
+def get_product(product_id):
+    db = SessionLocal()
+    try:
+        product = db.get(Product, product_id)
+        if not product:
+            return {"error": "Product not found"}, 404
+        return {
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+            "entry_date": str(product.entry_date),
+            "quantity": product.quantity
+        }
+    finally:
+        db.close()
+
+
+@api.route("/products/<int:product_id>", methods=["PUT"])
+@token_required
+@admin_required
+def update_product(product_id):
+    db = SessionLocal()
+    try:
+        product = db.get(Product, product_id)
+        if not product:
+            return {"error": "Product not found"}, 404
+        data = request.get_json()
+        if not data:
+            return {"error": "No data provided"}, 400
+        if "name" in data:
+            product.name = data["name"]
+        if "price" in data:
+            product.price = data["price"]
+        if "entry_date" in data:
+            product.entry_date = datetime.strptime(data["entry_date"], "%Y-%m-%d").date()
+        if "quantity" in data:
+            product.quantity = data["quantity"]
+
+        db.commit()
+        return {"message": "Product updated successfully"}
+    finally:
+        db.close()
+
+
+@api.route("/products/<int:product_id>", methods=["DELETE"])
+@token_required
+@admin_required
+def delete_product(product_id):
+    db = SessionLocal()
+    try:
+        product = db.get(Product, product_id)
+        if not product:
+            return {"error": "Product not found"}, 404
+
+        db.delete(product)
+        db.commit()
+        return {"message": "Product deleted successfully"}
+    finally:
+        db.close()
 
 
 @api.route("/buy", methods=["POST"])
 @token_required
 def buy_product():
     db = SessionLocal()
-    data = request.get_json()
-    product = db.query(Product).get(data["product_id"])
-    if not product:
-        return {"error": "Product not found"}, 404
-    if product.quantity < data["quantity"]:
-        return {"error": "Not enough in stock"}, 400
-    total = product.price * data["quantity"]
-    bill = Bill(
-        user_id=request.user["id"],
-        product_id=product.id,
-        quantity=data["quantity"],
-        total_price=total
-    )
-    product.quantity -= data["quantity"]
+    try:
+        data = request.get_json()
+        if not data or "product_id" not in data or "quantity" not in data:
+            return {"error": "Missing fields: product_id and quantity are required"}, 400
 
-    db.add(bill)
-    db.commit()
+        product = db.get(Product, data["product_id"])
+        if not product:
+            return {"error": "Product not found"}, 404
+        if product.quantity < data["quantity"]:
+            return {"error": "Not enough in stock"}, 400
 
-    return {"message": "Purchase successful"}
+        total = product.price * data["quantity"]
+        bill = Bill(
+            user_id=request.user["id"],
+            product_id=product.id,
+            quantity=data["quantity"],
+            total_price=total
+        )
+        product.quantity -= data["quantity"]
+
+        db.add(bill)
+        db.commit()
+
+        return {"message": "Purchase successful"}
+    finally:
+        db.close()
 
 
-@api.route("/my_bills", methods=["GET"])
+@api.route("/bills", methods=["GET"])
 @token_required
 def my_bills():
     db = SessionLocal()
-    bills = db.query(Bill).filter(
-        Bill.user_id == request.user["id"]
-    ).all()
-    result = []
-    for bill in bills:
-        result.append({
-            "bill_id": bill.id,
-            "product": bill.product.name,
-            "quantity": bill.quantity,
-            "total": bill.total_price
-        })
-    return result
+    try:
+        bills = db.query(Bill).filter(
+            Bill.user_id == request.user["id"]
+        ).all()
+        result = []
+        for bill in bills:
+            result.append({
+                "bill_id": bill.id,
+                "product": bill.product.name,
+                "quantity": bill.quantity,
+                "total": bill.total_price
+            })
+        return result
+    finally:
+        db.close()
