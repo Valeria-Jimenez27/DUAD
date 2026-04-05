@@ -17,6 +17,7 @@ cd Proyecto_final_de_modulo2
 **Create virtual environment**
 
 python -m venv venv
+
 .\venv\Scripts\Activate.ps1    # Windows
 
 **Install dependencies**
