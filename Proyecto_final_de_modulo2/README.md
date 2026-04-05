@@ -10,7 +10,8 @@ The project strictly follows CRUD principles across all modules — Users, Custo
 
 **Clone the repository**
 
-git clone https://github.com/Valeria-Jimenez27/Proyecto_final_de_modulo2.git
+git clone https://github.com/Valeria-Jimenez27/DUAD/tree/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2
+
 cd Proyecto_final_de_modulo2
 
 **Create virtual environment**
