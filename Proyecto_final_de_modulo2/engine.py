@@ -1,11 +1,12 @@
 from dotenv import load_dotenv
+import os
 load_dotenv()
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 
-DB_URI = ("postgresql://postgres:postgres@localhost:5432/pet_store")
+DB_URI = os.getenv("DB_URI")
 engine = create_engine(DB_URI, echo=True)
 
 SessionLocal = sessionmaker(bind=engine)
