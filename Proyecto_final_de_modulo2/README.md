@@ -223,15 +223,15 @@ GET /orders/{id}/invoice → Retrieve invoice.
 POST /orders/{id}/refund → Refund order.
 ## Examples in Postman
 
-![Carts testing]([carts_testing.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/carts_testing.PNG))
+![Carts testing](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/carts_testing.PNG)
 
-![Get Customers]([get_customers.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/get_customers.PNG))
+![Get Customers](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/get_customers.PNG)
 
-![Post Customers]([post_customers_example.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/post_customers_example.PNG))
+![Post Customers](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/post_customers_example.PNG)
 
-![Put products]([put_product.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/put_product.PNG))
+![Put products](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/put_product.PNG)
 
-![Delete products]([delete_products.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/delete_products.PNG))
+![Delete products](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/delete_products.PNG)
 ## Notes
 
 -Customers must be created before carts can be assigned.
