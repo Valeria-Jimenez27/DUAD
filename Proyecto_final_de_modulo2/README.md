@@ -223,15 +223,15 @@ GET /orders/{id}/invoice → Retrieve invoice.
 POST /orders/{id}/refund → Refund order.
 ## Examples in Postman
 
-![Carts testing](docs/carts_testing.png)
+![Carts testing]([carts_testing.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/carts_testing.PNG))
 
-![Get Customers](docs/get_customers.png)
+![Get Customers]([get_customers.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/get_customers.PNG))
 
-![Post Customers](docs/post_customers_example.png)
+![Post Customers]([post_customers_example.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/post_customers_example.PNG))
 
-![Put products](docs/put_product.png)
+![Put products]([put_product.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/put_product.PNG))
 
-![Delete products](docs/delete_products.png)
+![Delete products]([delete_products.png](https://github.com/Valeria-Jimenez27/DUAD/blob/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2/delete_products.PNG))
 ## Notes
 
 -Customers must be created before carts can be assigned.
