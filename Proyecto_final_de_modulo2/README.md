@@ -166,23 +166,6 @@ Unit testing scripts → written with pytest, along with a runner module to exec
 
 Main runner module → executes the core application logic (run_pet_store.py).
 
-Proyecto_final_de_modulo2/
-├── requirements.txt         # Project dependencies 
-├── run_pet_store.py         # Main runner
-├── env_example.py           # Example configuration of the REDIS and Postgress credentials
-├── DB.py                    # Data Base
-├── engine.py                # Data base configuration 
-├── users.py                 # Users module and endpoints
-├── products.py              # Products module and endpoints
-├── customers.py             # Customers module and endpoints
-├── sales.py                 # Sales module and endpoints
-├── Cache.py                 # Cache module using Redis
-├── auth.py                  # Authentication using JWT tokens
-│   ├── private.pem          # Private Key hide with .gitignore
-│   ├── public.pem.          # Public Key hide with .gitignore
-└── run_test_api             # Run unit tests
-    ├── test.api.py          # Unit testing
-
 ## Endpoints
 
 **Users**
