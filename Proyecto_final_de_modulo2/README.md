@@ -23,6 +23,21 @@ python -m venv venv
 **Install dependencies**
 pip install -r requirements.txt
 
+**Set up environment variables**
+
+Copy the example file and fill in your values:
+
+```bash
+cp .env.example .env
+```
+Required variables:
+
+```
+DB_URI=postgresql://user:password@localhost:5432/petstore
+REDIS_HOST=your-redis-host
+REDIS_PORT=6379
+REDIS_PASSWORD=your-redis-password
+```
 
 ## Tech tools
 
@@ -45,6 +60,56 @@ JWT Authentication with RSA keys
 Readme.so
 
 Dependencies are listed in requirements.txt.
+
+
+## RSA Key Generation
+
+The app uses RS256 JWT authentication. You must generate the RSA key pair before running the server. Without these files, the server will fail on any authenticated request.
+
+Run these commands in the project root:
+
+```bash
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -pubout -out public.pem
+```
+
+This will create `private.pem` (used to sign tokens) and `public.pem` (used to verify them). Both files are excluded from version control via `.gitignore`.
+
+# Entity-Relationship Diagram
+
+```
+users ──────────────────────── customers
+ id (PK)                        customer_id (PK)
+ name                           first_name
+ email                          last_name
+ password                       email
+ role                           phone
+                                address
+                                user_id (FK → users.id)
+
+customers ──────────────── shopping_carts ──────────── cart_items
+ customer_id (PK)               cart_id (PK)            cart_item_id (PK)
+                                customer_id (FK)         cart_id (FK)
+                                created_at               product_id (FK)
+                                is_active                quantity
+
+customers ──────────────── orders ──────────────────── order_details
+ customer_id (PK)               order_id (PK)           order_detail_id (PK)
+                                customer_id (FK)         order_id (FK)
+                                order_date               product_id (FK)
+                                total_amount             quantity
+                                billing_address          unit_price
+                                payment_method
+                                status
+
+products ──────────── brands
+ product_id (PK)        brand_id (PK)
+ brand_id (FK)          brand_name
+ category_id (FK)
+ name               products ──────────── categories
+ price               product_id (PK)       category_id (PK)
+ quantity            category_id (FK)      category_name
+```
 
 
 ## Deployment
@@ -100,6 +165,24 @@ Cache.py → integrates Redis for caching invoices, orders, and product data.
 Unit testing scripts → written with pytest, along with a runner module to execute them automatically(run_test_api.py).
 
 Main runner module → executes the core application logic (run_pet_store.py).
+
+Proyecto_final_de_modulo2/
+├── requirements.txt         # Project dependencies 
+├── run_pet_store.py         # Main runner
+├── env_example.py           # Example configuration of the REDIS and Postgress credentials
+├── DB.py                    # Data Base
+├── engine.py                # Data base configuration 
+├── users.py                 # Users module and endpoints
+├── products.py              # Products module and endpoints
+├── customers.py             # Customers module and endpoints
+├── sales.py                 # Sales module and endpoints
+├── Cache.py                 # Cache module using Redis
+├── auth.py                  # Authentication using JWT tokens
+│   ├── private.pem          # Private Key hide with .gitignore
+│   ├── public.pem.          # Public Key hide with .gitignore
+└── run_test_api             # Run unit tests
+    ├── test.api.py          # Unit testing
+
 ## Endpoints
 
 **Users**
@@ -157,15 +240,15 @@ GET /orders/{id}/invoice → Retrieve invoice.
 POST /orders/{id}/refund → Refund order.
 ## Examples in Postman
 
-![Carts testing](C:\Users\hp\Pictures\Screenshots\carts_testing)
+![Carts testing](docs/carts_testing.png)
 
-![Get Customers](C:\Users\hp\Pictures\Screenshots\get_customers)
+![Get Customers](docs/get_customers.png)
 
-![Post Customers](C:\Users\hp\Pictures\Screenshots\post_customers_example)
+![Post Customers](docs/post_customers_example.png)
 
-![Put products](C:\Users\hp\Pictures\Screenshots\put_product)
+![Put products](docs/put_product.png)
 
-![Delete products](C:\Users\hp\Pictures\Screenshots\delete_products)
+![Delete products](docs/delete_products.png)
 ## Notes
 
 -Customers must be created before carts can be assigned.

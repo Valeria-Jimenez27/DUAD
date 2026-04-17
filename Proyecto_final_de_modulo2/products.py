@@ -14,6 +14,7 @@ CATEGORIES_ALL_KEY = "categories:all"
 
 #product endpoints
 @products_bp.route("/products", methods=["GET"])
+@token_required
 def get_products():
     cached = cache_manager.get_data(PRODUCTS_ALL_KEY)
     if cached:
@@ -40,6 +41,7 @@ def get_products():
 
 
 @products_bp.route("/products/<int:id>", methods=["GET"])
+@token_required
 def get_product(id):
     cache_key = PRODUCT_KEY.format(id)
     cached = cache_manager.get_data(cache_key)

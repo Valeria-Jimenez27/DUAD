@@ -46,7 +46,7 @@ def get_cart(cart_id):
             return jsonify({"error": "Cart not found"}), 404
         items = []
         for item in cart.items:
-            product = db.query(Product).filter(Product.product_id == item.product_id).first()
+            product = item.product
             items.append({
                 "cart_item_id": item.cart_item_id,
                 "product_id": item.product_id,
@@ -229,7 +229,7 @@ def get_invoice(order_id):
         customer = db.query(Customer).filter(Customer.customer_id == order.customer_id).first()
         items = []
         for detail in order.details:
-            product = db.query(Product).filter(Product.product_id == detail.product_id).first()
+            product = detail.product
             items.append({
                 "product_id": detail.product_id,
                 "product_name": product.name if product else None,

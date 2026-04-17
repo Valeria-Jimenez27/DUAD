@@ -50,7 +50,9 @@ class Customer(Base):
     email = Column(String, unique=True, nullable=False)
     phone = Column(String)
     address = Column(String)
-
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=True)
+    
+    user = relationship("User", back_populates="customer")
     shopping_carts = relationship("ShoppingCart", back_populates="customer")
     orders = relationship("Order", back_populates="customer")
 

@@ -20,7 +20,7 @@ def register():
             name=data["name"],
             email=data["email"],
             password=hashed_password,
-            role=data.get("role", "user")
+            role="user"
         )
         db.add(user)
         db.commit()

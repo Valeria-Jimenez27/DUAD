@@ -26,6 +26,7 @@ def test_register_success(client):
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = None
+        db.refresh.side_effect = lambda x: setattr(x, "id", 1)
         # act
         response = client.post("/register", json={
             "name": "Test User",
@@ -162,6 +163,7 @@ def test_create_customer_success(client):
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = None
+        db.refresh.side_effect = lambda x: setattr(x, "customer_id", 1)
         # act
         response = client.post("/customers", json={
             "first_name": "Francisco",
@@ -229,10 +231,21 @@ def test_delete_customer_not_found(client):
 
 
 #testing products
+def test_get_products_without_token(client):
+    # arrange - no hay token
+    # act
+    response = client.get("/products")
+    # assert
+    assert response.status_code == 401
+    assert response.get_json()["error"] == "Token missing"
+
+
 def test_get_products_from_db(client):
     # arrange
-    with patch("products.cache_manager") as mock_cache, \
+    with patch("auth.jwt.decode") as mock_decode, \
+        patch("products.cache_manager") as mock_cache, \
         patch("products.SessionLocal") as mock_session:
+        mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
         mock_session.return_value = db
@@ -245,7 +258,7 @@ def test_get_products_from_db(client):
         mock_product.category.category_name = "Dog Food"
         db.query.return_value.all.return_value = [mock_product]
         # act
-        response = client.get("/products")
+        response = client.get("/products", headers=mock_user_token())
         # assert
         assert response.status_code == 200
         assert isinstance(response.get_json(), list)
@@ -254,12 +267,14 @@ def test_get_products_from_db(client):
 
 def test_get_products_from_cache(client):
     # arrange
-    with patch("products.cache_manager") as mock_cache:
+    with patch("auth.jwt.decode") as mock_decode, \
+        patch("products.cache_manager") as mock_cache:
+        mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = [
             {"product_id": 1, "name": "Cached Product", "price": 65.00}
         ]
         # act
-        response = client.get("/products")
+        response = client.get("/products", headers=mock_user_token())
         # assert
         assert response.status_code == 200
         assert response.get_json()[0]["name"] == "Cached Product"
@@ -267,8 +282,10 @@ def test_get_products_from_cache(client):
 
 def test_get_product_by_id_success(client):
     # arrange
-    with patch("products.cache_manager") as mock_cache, \
+    with patch("auth.jwt.decode") as mock_decode, \
+        patch("products.cache_manager") as mock_cache, \
         patch("products.SessionLocal") as mock_session:
+        mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
         mock_session.return_value = db
@@ -281,7 +298,7 @@ def test_get_product_by_id_success(client):
         mock_product.category.category_name = "Dog Food"
         db.query.return_value.filter.return_value.first.return_value = mock_product
         # act
-        response = client.get("/products/1")
+        response = client.get("/products/1", headers=mock_user_token())
         # assert
         assert response.status_code == 200
         assert response.get_json()["product_id"] == 1
@@ -289,14 +306,16 @@ def test_get_product_by_id_success(client):
 
 def test_get_product_not_found(client):
     # arrange
-    with patch("products.cache_manager") as mock_cache, \
+    with patch("auth.jwt.decode") as mock_decode, \
+        patch("products.cache_manager") as mock_cache, \
         patch("products.SessionLocal") as mock_session:
+        mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = None
         # act
-        response = client.get("/products/100")
+        response = client.get("/products/100", headers=mock_user_token())
         # assert
         assert response.status_code == 404
         assert response.get_json()["error"] == "Product not found"

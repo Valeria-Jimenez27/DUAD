@@ -2,6 +2,7 @@ import jwt
 from flask import request
 from functools import wraps
 import os
+from datetime import datetime, timedelta, timezone
 
 BASE_DIR = os.path.dirname(__file__)
 PRIVATE_KEY_PATH = os.path.join(BASE_DIR, "private.pem")
@@ -17,7 +18,8 @@ with open(PUBLIC_KEY_PATH, "rb") as f:
 def generate_token(user):
     payload = {
         "id": user.id,
-        "role": user.role
+        "role": user.role,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=2)
     }
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
     return token
