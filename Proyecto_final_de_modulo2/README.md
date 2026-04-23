@@ -5,14 +5,6 @@ PetStore App is a backend project designed to demonstrate how to build an e-comm
 
 The project strictly follows CRUD principles across all modules — Users, Customers, Products, and Sales — ensuring consistency, clarity, and simplicity for end users. 
 
-# PetStore API
-
-A backend REST API for a pet store e-commerce application, built from a real case where the business was managed entirely with Excel sheets. The goal was to migrate all data into a relational database and provide a stable, scalable backend that supports product management, user authentication, customer records, and sales.
-
-Built as the final project for Module 2 of the DUAD backend development course.
-
----
-
 ## Prerequisites
 
 Before running this project, make sure you have the following installed:
