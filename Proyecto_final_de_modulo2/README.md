@@ -5,31 +5,57 @@ PetStore App is a backend project designed to demonstrate how to build an e-comm
 
 The project strictly follows CRUD principles across all modules — Users, Customers, Products, and Sales — ensuring consistency, clarity, and simplicity for end users. 
 
+# PetStore API
+
+A backend REST API for a pet store e-commerce application, built from a real case where the business was managed entirely with Excel sheets. The goal was to migrate all data into a relational database and provide a stable, scalable backend that supports product management, user authentication, customer records, and sales.
+
+Built as the final project for Module 2 of the DUAD backend development course.
+
+---
+
+## Prerequisites
+
+Before running this project, make sure you have the following installed:
+
+- [Python 3.10+](https://www.python.org/downloads/)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- [Redis](https://redis.io/) (or a cloud instance via [Redis Cloud](https://redis.com/try-free/))
+- [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html) (for RSA key generation)
+- [Postman](https://www.postman.com/) (optional, for testing endpoints)
+
+---
 
 ## Installation
 
-**Clone the repository**
+**1. Clone the repository**
 
-git clone https://github.com/Valeria-Jimenez27/DUAD/tree/Proyecto_final_de_modulo2/Proyecto_final_de_modulo2
+```bash
+git clone https://github.com/Valeria-Jimenez27/DUAD.git
+cd DUAD/Proyecto_final_de_modulo2
+```
 
-cd Proyecto_final_de_modulo2
+**2. Create and activate a virtual environment**
 
-**Create virtual environment**
-
+```bash
 python -m venv venv
 
-.\venv\Scripts\Activate.ps1    # Windows
+# Windows
+.\venv\Scripts\Activate.ps1
 
-**Install dependencies**
+**3. Install dependencies**
+
+```bash
 pip install -r requirements.txt
+```
 
-**Set up environment variables**
+**4. Set up environment variables**
 
 Copy the example file and fill in your values:
 
 ```bash
 cp .env.example .env
 ```
+
 Required variables:
 
 ```
@@ -37,45 +63,177 @@ DB_URI=postgresql://user:password@localhost:5432/petstore
 REDIS_HOST=your-redis-host
 REDIS_PORT=6379
 REDIS_PASSWORD=your-redis-password
+ADMIN_EMAIL=your-admin-email@example.com
+ADMIN_PASSWORD=your-secure-password
+ADMIN_NAME=Admin
 ```
 
-## Tech tools
+**5. Generate RSA keys**
 
-Python
-
-Flask
-
-SQLAlchemy
-
-PostgreSQL
-
-Redis
-
-Postman
-
-JWT Authentication with RSA keys
-
-.env for environment variables (excluded via .gitignore)
-
-Readme.so
-
-Dependencies are listed in requirements.txt.
-
-
-## RSA Key Generation
-
-The app uses RS256 JWT authentication. You must generate the RSA key pair before running the server. Without these files, the server will fail on any authenticated request.
-
-Run these commands in the project root:
+The API uses RS256 JWT authentication. Run these commands from the project root:
 
 ```bash
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -pubout -out public.pem
 ```
 
-This will create `private.pem` (used to sign tokens) and `public.pem` (used to verify them). Both files are excluded from version control via `.gitignore`.
+This creates `private.pem` (signs tokens) and `public.pem` (verifies them). Both are excluded from version control via `.gitignore`.
 
-# Entity-Relationship Diagram
+---
+
+## Usage
+
+**Seed the initial admin user (run once)**
+
+```bash
+python seed.py
+```
+
+**Start the API server**
+
+```bash
+python run_pet_store.py
+```
+
+The server runs at `http://127.0.0.1:5000` by default.
+
+**Run unit tests**
+
+```bash
+python run_test_api.py
+```
+
+**Typical flow in Postman:**
+
+1. `POST /register` → create a user account
+2. `POST /login` → receive a JWT token
+3. Use the token in the `Authorization: Bearer <token>` header for all protected endpoints
+
+---
+
+## Project Structure
+
+```
+Proyecto_final_de_modulo2/
+│
+├── app/
+│   ├── __init__.py
+│   ├── database/
+│   │   ├── __init__.py
+│   │   └── engine.py          # DB connection and session config
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── DB.py              # SQLAlchemy table definitions and relationships
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── auth.py            # JWT authentication and decorators
+│   │   └── Cache.py           # Redis cache manager
+│   └── routes/
+│       ├── __init__.py
+│       ├── users.py           # User endpoints
+│       ├── products.py        # Product, brand, and category endpoints
+│       ├── customers.py       # Customer endpoints
+│       └── sales.py           # Cart, checkout, orders, and refunds
+│── pictures/
+│       ├── carts_testing.PNG      #example of how to run an endpoint in Postman
+│       ├── get_customers.PNG      #example of how to run an endpoint in Postman 
+│       ├── post_customers.PNG     #example of how to run an endpoint in Postman           
+│       └── put_product.PNG        #example of how to run an endpoint in Postman
+├── tests/
+│   └── test_api.py            # Unit tests (pytest + unittest.mock)
+│
+├── private.pem                # RSA private key — excluded via .gitignore
+├── public.pem                 # RSA public key — excluded via .gitignore
+├── run_pet_store.py           # App entry point
+├── run_test_api.py            # Test runner with formatted report
+├── seed.py                    # Seeds initial admin user
+├── data_tables_testing.py     # Seeds brands, categories, and products
+├── requirements.txt           # Project dependencies
+├── .env                       # Environment variables — excluded via .gitignore
+└── .env.example               # Environment variable template
+```
+
+---
+
+## Tech Stack
+
+| Tool | Purpose |
+|---|---|
+| Python + Flask | Web framework and routing |
+| SQLAlchemy | ORM and database management |
+| PostgreSQL | Relational database |
+| Redis | Caching layer |
+| PyJWT + RS256 | JWT authentication with RSA keys |
+| bcrypt | Password hashing |
+| pytest + unittest.mock | Unit testing |
+| python-dotenv | Environment variable management |
+
+---
+
+## Authentication
+
+The API uses JWT tokens signed with RSA keys (RS256 algorithm):
+
+- `POST /register` → creates a user with `role: user`
+- `POST /login` → returns a signed JWT
+- Protected endpoints require `Authorization: Bearer <token>` header
+- Admin-only endpoints additionally require `role: admin`
+- To promote a user to admin: `PUT /users/{id}/role` with `{ "role": "admin" }` (admin token required)
+
+---
+
+## Endpoints
+
+**Users**
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | /register | Public | Create a new user |
+| POST | /login | Public | Authenticate and receive JWT |
+| GET | /users | Admin | List all users |
+| GET | /users/{id} | Admin | Get user by ID |
+| PUT | /users/{id} | Admin | Update user info |
+| PUT | /users/{id}/role | Admin | Promote or demote user role |
+| DELETE | /users/{id} | Admin | Delete user |
+
+**Customers**
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | /customers | Public | Create a new customer |
+| GET | /customers | Admin | List all customers |
+| GET | /customers/{id} | Admin | Get customer by ID |
+| PUT | /customers/{id} | Admin | Update customer |
+| DELETE | /customers/{id} | Admin | Delete customer |
+
+**Products**
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | /products | User | List all products |
+| GET | /products/{id} | User | Get product by ID |
+| POST | /products | Admin | Create product |
+| PUT | /products/{id} | Admin | Update product |
+| DELETE | /products/{id} | Admin | Delete product |
+| GET | /brands | Public | List all brands |
+| GET | /categories | Public | List all categories |
+
+**Sales**
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | /carts | User | Create shopping cart |
+| GET | /carts/{cart_id} | User | View cart details |
+| POST | /carts/{cart_id}/items | User | Add item to cart |
+| DELETE | /carts/{cart_id}/items/{item_id} | User | Remove item from cart |
+| POST | /carts/{cart_id}/checkout | User | Checkout and create order |
+| GET | /orders | Admin | List all orders |
+| GET | /orders/{id}/invoice | User | Retrieve invoice |
+| POST | /orders/{id}/refund | Admin | Refund order |
+
+---
+
+## Entity-Relationship Diagram
 
 ```
 users ──────────────────────── customers
@@ -102,145 +260,20 @@ customers ──────────────── orders ────�
                                 payment_method
                                 status
 
-products ──────────── brands
- product_id (PK)        brand_id (PK)
- brand_id (FK)          brand_name
+products ──────────── brands          products ──────────── categories
+ product_id (PK)       brand_id (PK)   product_id (PK)       category_id (PK)
+ brand_id (FK)         brand_name      category_id (FK)       category_name
  category_id (FK)
- name               products ──────────── categories
- price               product_id (PK)       category_id (PK)
- quantity            category_id (FK)      category_name
+ name
+ price
+ quantity
 ```
 
+---
 
-## Deployment
-
-To deploy this project run:
-
-**Start the API server:**
-
-python run_pet_store.py
-
-**Run unit tests:**
-
-python run_test_api.py
-
-
-## Authentication
-
-
-The API uses JWT signed with RSA keys:
-
-Algorithm: RS256 (RSA Signature with SHA-256).
-
-Password hashing: bcrypt for secure storage and verification.
-
-private.pem → used to sign tokens.
-
-public.pem → used to verify tokens.
-
-Keys are stored securely in .env and excluded from version control.
-
-Flow: Register → Login → Receive JWT → Access protected endpoints.
-## Code Structure
-
-
-The application is structured into four main modules:
-
-products.py → handles product creation, updates, stock management, and deletion.
-
-users.py → manages user registration, login, CRUD, and secure authentication.
-
-customers.py → manages customer records and their relationship with carts and orders.
-
-sales.py → handles shopping carts, checkout, orders, invoices, and refunds.
-
-Additional supporting modules include:
-
-engine.py → connects to DB.py, where all tables, relationships, and store data are defined.
-
-auth.py → provides secure user authentication using JWT tokens with RS256 and password hashing via bcrypt.
-
-Cache.py → integrates Redis for caching invoices, orders, and product data.
-
-Unit testing scripts → written with pytest, along with a runner module to execute them automatically(run_test_api.py).
-
-Main runner module → executes the core application logic (run_pet_store.py).
-
-Proyecto_final_de_modulo2/
-├── requirements.txt         # Project dependencies 
-├── run_pet_store.py         # Main runner
-├── env_example.py           # Example configuration of the REDIS and Postgress credentials
-├── DB.py                    # Data Base
-├── engine.py                # Data base configuration 
-├── users.py                 # Users module and endpoints
-├── products.py              # Products module and endpoints
-├── customers.py             # Customers module and endpoints
-├── sales.py                 # Sales module and endpoints
-├── Cache.py                 # Cache module using Redis
-├── auth.py                  # Authentication using JWT tokens
-│   ├── private.pem          # Private Key hide with .gitignore
-│   ├── public.pem.          # Public Key hide with .gitignore
-└── run_test_api             # Run unit tests
-    ├── test.api.py          # Unit testing
-
-## Endpoints
-
-**Users**
-
-POST /register → Create a new user.
-
-POST /login → Authenticate and receive JWT.
-
-GET /users → List all users (admin only).
-
-PUT /users/{id} → Update user.
-
-DELETE /users/{id} → Delete user.
-
-**Customers**
-
-POST /customers → Create a new customer.
-
-GET /customers → List all customers.
-
-GET /customers/{id} → Get customer details.
-
-PUT /customers/{id} → Update customer.
-
-DELETE /customers/{id} → Delete customer.
-
-**Products**
-
-POST /products → Create product.
-
-GET /products → List products.
-
-GET /products/{id} → Get product details.
-
-PUT /products/{id} → Update product.
-
-DELETE /products/{id} → Delete product.
-
-**Sales**
-
-POST /carts → Create shopping cart.
-
-POST /carts/{cart_id}/items → Add item to cart.
-
-DELETE /carts/{cart_id}/items/{item_id} → Remove item from cart.
-
-GET /carts/{cart_id} → View cart details.
-
-POST /carts/{cart_id}/checkout → Checkout and create order.
-
-GET /orders → List all orders (admin only).
-
-GET /orders/{id}/invoice → Retrieve invoice.
-
-POST /orders/{id}/refund → Refund order.
 ## Examples in Postman
 
-![Carts testing](docs/carts_testing.png)
+![Delete products](docs/delete_products.png)
 
 ![Get Customers](docs/get_customers.png)
 
@@ -248,13 +281,14 @@ POST /orders/{id}/refund → Refund order.
 
 ![Put products](docs/put_product.png)
 
-![Delete products](docs/delete_products.png)
+![Carts testing](docs/carts_testing.png)
+
+---
+
 ## Notes
 
--Customers must be created before carts can be assigned.
-
--Product stock is automatically updated during checkout and refund.
-
--Cache invalidation is handled for invoices, orders, and products.
-
--Sensitive files (.env, private.pem, public.pem) must be excluded from version control using .gitignore.
+- Customers must be created before carts can be assigned to them.
+- Product stock is automatically decremented on checkout and restored on refund.
+- Redis cache is invalidated automatically when products, orders, or invoices are modified.
+- Sensitive files (`.env`, `private.pem`, `public.pem`) must never be committed — all are covered by `.gitignore`.
+- Run `seed.py` only once per environment to avoid duplicate admin errors.

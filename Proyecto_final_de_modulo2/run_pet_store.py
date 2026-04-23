@@ -2,12 +2,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from flask import Flask
-from users import users_bp
-from products import products_bp
-from sales import sales_bp
-from engine import create_tables
-from Cache import cache_manager
-from customers import customers_bp
+from app.routes.users import users_bp
+from app.routes.products import products_bp
+from app.routes.customers import customers_bp
+from app.routes.sales import sales_bp
+from app.database.engine import create_tables
+from app.services.Cache import cache_manager
+
 
 
 app = Flask(__name__)

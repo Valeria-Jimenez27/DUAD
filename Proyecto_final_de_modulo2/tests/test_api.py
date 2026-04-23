@@ -22,7 +22,7 @@ def mock_admin_token():
 #testing users
 def test_register_success(client):
     # arrange
-    with patch("users.SessionLocal") as mock_session:
+    with patch("app.routes.users.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = None
@@ -40,7 +40,7 @@ def test_register_success(client):
 
 def test_register_duplicate_email(client):
     # arrange
-    with patch("users.SessionLocal") as mock_session:
+    with patch("app.routes.users.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = MagicMock()
@@ -57,7 +57,7 @@ def test_register_duplicate_email(client):
 
 def test_login_success(client):
     # arrange
-    with patch("users.SessionLocal") as mock_session:
+    with patch("app.routes.users.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         mock_user = MagicMock()
@@ -79,7 +79,7 @@ def test_login_success(client):
 
 def test_login_wrong_password(client):
     # arrange
-    with patch("users.SessionLocal") as mock_session:
+    with patch("app.routes.users.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         mock_user = MagicMock()
@@ -99,7 +99,7 @@ def test_login_wrong_password(client):
 
 def test_login_nonexistent_user(client):
     # arrange
-    with patch("users.SessionLocal") as mock_session:
+    with patch("app.routes.users.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = None
@@ -124,8 +124,8 @@ def test_get_users_without_token(client):
 
 def test_get_users_with_user_role(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("users.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.users.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         db = MagicMock()
         mock_session.return_value = db
@@ -138,8 +138,8 @@ def test_get_users_with_user_role(client):
 
 def test_get_users_with_admin_role(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("users.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.users.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "admin"}
         db = MagicMock()
         mock_session.return_value = db
@@ -159,7 +159,7 @@ def test_get_users_with_admin_role(client):
 #testing customers
 def test_create_customer_success(client):
     # arrange
-    with patch("customers.SessionLocal") as mock_session:
+    with patch("app.routes.customers.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = None
@@ -179,7 +179,7 @@ def test_create_customer_success(client):
 
 def test_create_customer_duplicate_email(client):
     # arrange
-    with patch("customers.SessionLocal") as mock_session:
+    with patch("app.routes.customers.SessionLocal") as mock_session:
         db = MagicMock()
         mock_session.return_value = db
         db.query.return_value.filter.return_value.first.return_value = MagicMock()
@@ -216,8 +216,8 @@ def test_delete_customer_without_token(client):
 
 def test_delete_customer_not_found(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("customers.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.customers.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "admin"}
         db = MagicMock()
         mock_session.return_value = db
@@ -242,9 +242,9 @@ def test_get_products_without_token(client):
 
 def test_get_products_from_db(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("products.cache_manager") as mock_cache, \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.products.cache_manager") as mock_cache, \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
@@ -267,8 +267,8 @@ def test_get_products_from_db(client):
 
 def test_get_products_from_cache(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("products.cache_manager") as mock_cache:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.products.cache_manager") as mock_cache:
         mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = [
             {"product_id": 1, "name": "Cached Product", "price": 65.00}
@@ -282,9 +282,9 @@ def test_get_products_from_cache(client):
 
 def test_get_product_by_id_success(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("products.cache_manager") as mock_cache, \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.products.cache_manager") as mock_cache, \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
@@ -306,9 +306,9 @@ def test_get_product_by_id_success(client):
 
 def test_get_product_not_found(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("products.cache_manager") as mock_cache, \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.products.cache_manager") as mock_cache, \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
@@ -338,9 +338,9 @@ def test_create_product_without_token(client):
 
 def test_create_product_with_admin(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("products.cache_manager"), \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.products.cache_manager"), \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "admin"}
         db = MagicMock()
         mock_session.return_value = db
@@ -369,9 +369,9 @@ def test_update_product_without_token(client):
 
 def test_delete_product_not_found(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("products.cache_manager"), \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.products.cache_manager"), \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "admin"}
         db = MagicMock()
         mock_session.return_value = db
@@ -386,8 +386,8 @@ def test_delete_product_not_found(client):
 
 def test_get_brands_success(client):
     # arrange
-    with patch("products.cache_manager") as mock_cache, \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.routes.products.cache_manager") as mock_cache, \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_cache.get_data.return_value = None
         db = MagicMock()
         mock_session.return_value = db
@@ -404,8 +404,8 @@ def test_get_brands_success(client):
 
 def test_get_categories_success(client):
     # arrange
-    with patch("products.cache_manager") as mock_cache, \
-        patch("products.SessionLocal") as mock_session:
+    with patch("app.routes.products.cache_manager") as mock_cache, \
+        patch("app.routes.products.SessionLocal") as mock_session:
         mock_cache.get_data.return_value = None
         db = MagicMock()
         mock_session.return_value = db
@@ -432,8 +432,8 @@ def test_create_cart_without_token(client):
 
 def test_create_cart_already_exists(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         db = MagicMock()
         mock_session.return_value = db
@@ -449,9 +449,9 @@ def test_create_cart_already_exists(client):
 
 
 def test_get_cart_not_found(client):
-    # arrange - mockear jwt.decode para simular token con rol user
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.SessionLocal") as mock_session:
+    # arrange
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         db = MagicMock()
         mock_session.return_value = db
@@ -464,9 +464,9 @@ def test_get_cart_not_found(client):
 
 
 def test_add_item_insufficient_stock(client):
-    # arrange - mockear jwt.decode para simular token con rol user
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.SessionLocal") as mock_session:
+    # arrange
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         db = MagicMock()
         mock_session.return_value = db
@@ -499,9 +499,9 @@ def test_checkout_without_token(client):
 
 
 def test_checkout_missing_billing_address(client):
-    # arrange - mockear jwt.decode para simular token con rol user
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.SessionLocal") as mock_session:
+    # arrange
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         db = MagicMock()
         mock_session.return_value = db
@@ -518,9 +518,9 @@ def test_checkout_missing_billing_address(client):
 
 
 def test_checkout_missing_payment_method(client):
-    # arrange - mockear jwt.decode para simular token con rol user
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.SessionLocal") as mock_session:
+    # arrange
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         db = MagicMock()
         mock_session.return_value = db
@@ -538,8 +538,8 @@ def test_checkout_missing_payment_method(client):
 
 def test_get_invoice_from_cache(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.cache_manager") as mock_cache:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.cache_manager") as mock_cache:
         mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = {
             "order_id": 1,
@@ -553,10 +553,10 @@ def test_get_invoice_from_cache(client):
 
 
 def test_get_invoice_not_found(client):
-    # arrange - mockear jwt.decode para simular token con rol user
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.cache_manager") as mock_cache, \
-        patch("sales.SessionLocal") as mock_session:
+    # arrange
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.cache_manager") as mock_cache, \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "user"}
         mock_cache.get_data.return_value = None
         db = MagicMock()
@@ -580,9 +580,9 @@ def test_refund_without_token(client):
 
 def test_refund_order_not_found(client):
     # arrange
-    with patch("auth.jwt.decode") as mock_decode, \
-        patch("sales.cache_manager"), \
-        patch("sales.SessionLocal") as mock_session:
+    with patch("app.services.auth.jwt.decode") as mock_decode, \
+        patch("app.routes.sales.cache_manager"), \
+        patch("app.routes.sales.SessionLocal") as mock_session:
         mock_decode.return_value = {"id": 1, "role": "admin"}
         db = MagicMock()
         mock_session.return_value = db

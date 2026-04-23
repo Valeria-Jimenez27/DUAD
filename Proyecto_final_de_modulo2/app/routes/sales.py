@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from engine import SessionLocal
-from DB import ShoppingCart, CartItem, Order, OrderDetail, Customer, Product
-from auth import token_required, admin_required
-from products import update_product_stock
-from Cache import cache_manager
+from app.database.engine import SessionLocal
+from app.models.DB import ShoppingCart, CartItem, Order, OrderDetail, Customer, Product
+from app.services.auth import token_required, admin_required
+from app.routes.products import update_product_stock
+from app.services.Cache import cache_manager
 from datetime import datetime
 
 sales_bp = Blueprint("sales", __name__)

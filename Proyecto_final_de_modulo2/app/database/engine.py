@@ -18,7 +18,7 @@ def create_tables():
         print("Connection successful!")
         conn.close()
 
-        import DB
+        import app.models.DB
         Base.metadata.create_all(engine)
         print("Tables created successfully!")
 

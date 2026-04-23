@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from engine import SessionLocal
-from DB import Customer
-from auth import token_required, admin_required
+from app.database.engine import SessionLocal
+from app.models.DB import Customer
+from app.services.auth import token_required, admin_required
 
 customers_bp = Blueprint("customers", __name__)
 

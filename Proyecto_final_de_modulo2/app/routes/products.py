@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from engine import SessionLocal
-from DB import Product, Brand, Category
-from auth import token_required, admin_required
-from Cache import cache_manager
+from app.database.engine import SessionLocal
+from app.models.DB import Product, Brand, Category
+from app.services.auth import token_required, admin_required
+from app.services.Cache import cache_manager
 import json
 
 products_bp = Blueprint("products", __name__)

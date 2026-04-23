@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from engine import SessionLocal
-from DB import Brand, Category, Product
+from app.database.engine import SessionLocal
+from app.models.DB import Brand, Category, Product
 
 db = SessionLocal()
 

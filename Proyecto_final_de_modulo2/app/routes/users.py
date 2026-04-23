@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify
-from engine import SessionLocal
-from DB import User
-from auth import generate_token, token_required, admin_required
+from app.database.engine import SessionLocal
+from app.models.DB import User
+from app.services.auth import token_required, admin_required, generate_token
 import bcrypt
 
 users_bp = Blueprint("users", __name__)
 
-
+#register
 @users_bp.route("/register", methods=["POST"])
 def register():
     data = request.json
@@ -15,6 +15,7 @@ def register():
         existing = db.query(User).filter(User.email == data["email"]).first()
         if existing:
             return jsonify({"error": "Email already registered"}), 400
+
         hashed_password = bcrypt.hashpw(data["password"].encode(), bcrypt.gensalt()).decode()
         user = User(
             name=data["name"],
@@ -32,7 +33,7 @@ def register():
     finally:
         db.close()
 
-
+#login
 @users_bp.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -53,6 +54,46 @@ def login():
         db.close()
 
 
+@users_bp.route("/users/<int:id>/role", methods=["PUT"])
+@token_required
+@admin_required
+def update_user_role(id):
+    data = request.json
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.id == id).first()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        new_role = data.get("role")
+        allowed_roles = ["user", "admin"]
+        if new_role not in allowed_roles:
+            return jsonify({
+                "error": f"Invalid role. Allowed values: {allowed_roles}"
+            }), 400
+        if user.id == request.user["id"] and new_role != "admin":
+            return jsonify({
+                "error": "You cannot change your own role"
+            }), 400
+        old_role = user.role
+        user.role = new_role
+        db.commit()
+
+        return jsonify({
+            "message": f"Role updated successfully",
+            "user_id": user.id,
+            "name": user.name,
+            "previous_role": old_role,
+            "new_role": user.role
+        }), 200
+    except Exception as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+
+#CRUD endpoints
 @users_bp.route("/users", methods=["GET"])
 @token_required
 @admin_required
@@ -96,7 +137,6 @@ def update_user(id):
             return jsonify({"error": "User not found"}), 404
         user.name = data.get("name", user.name)
         user.email = data.get("email", user.email)
-        user.role = data.get("role", user.role)
         if "password" in data:
             user.password = bcrypt.hashpw(data["password"].encode(), bcrypt.gensalt()).decode()
         db.commit()

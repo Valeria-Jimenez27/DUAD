@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from engine import Base
+from app.database.engine import Base
 
 
 class User(Base):
@@ -11,6 +11,8 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     role = Column(String, default="user")
+
+    customer = relationship("Customer", back_populates="user", uselist=False)
 
 
 class Product(Base):

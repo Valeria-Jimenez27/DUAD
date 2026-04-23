@@ -4,7 +4,7 @@ from functools import wraps
 import os
 from datetime import datetime, timedelta, timezone
 
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 PRIVATE_KEY_PATH = os.path.join(BASE_DIR, "private.pem")
 PUBLIC_KEY_PATH = os.path.join(BASE_DIR, "public.pem")
 
