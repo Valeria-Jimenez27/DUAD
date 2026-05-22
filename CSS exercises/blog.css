@@ -1,0 +1,143 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --orange: #ff4f00;
+  --dark: #1a1a1a;
+  --text: #333;
+  --muted: #777;
+  --font-body: Georgia, 'Times New Roman', serif;
+  --font-sans: Arial, Helvetica, sans-serif;
+  --max-width: 620px;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: #fff;
+  font-size: 15px;
+  line-height: 1.65;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1.2rem;
+}
+
+.article {
+  width: 100%;
+  max-width: var(--max-width);
+}
+
+.article h1 {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--dark);
+  line-height: 1.2;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+
+.author-row {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.share-icons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.share-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--muted);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: var(--font-sans);
+}
+
+.hero-image {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+  margin-bottom: 1.4rem;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+}
+
+.content-row {
+  display: flex;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+
+.body-text {
+  flex: 1;
+}
+
+.cta-box {
+  flex: 0 0 180px;
+}
+
+.body-text p {
+  text-align: justify;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.cta-box {
+  background: var(--orange);
+  border-radius: 6px;
+  padding: 1.2rem 1rem;
+  text-align: center;
+}
+
+.cta-box p {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 0.9rem;
+}
+
+.cta-box a {
+  display: inline-block;
+  background: #fff;
+  color: var(--orange);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.45rem 1.1rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.cta-box a:hover {
+  background: #f0f0f0;
+}
