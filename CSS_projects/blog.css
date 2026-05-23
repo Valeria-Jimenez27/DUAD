@@ -88,18 +88,15 @@ body {
   object-fit: cover;
 }
 
-.content-row {
-  display: flex;
-  gap: 1.2rem;
-  align-items: flex-start;
-}
-
-.body-text {
-  flex: 1;
-}
-
 .cta-box {
-  flex: 0 0 180px;
+  float: right;        
+  width: 180px;     
+  margin-left: 1.2rem;  
+  margin-bottom: 0.8rem; 
+}
+
+.article {
+  overflow: hidden;
 }
 
 .body-text p {
