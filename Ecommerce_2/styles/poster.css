@@ -1,0 +1,75 @@
+.poster {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fce4ec;
+    padding: 3rem 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.poster .poster-image {
+    height: 20rem;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.poster .poster-content {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.poster .poster-content .poster-eyebrow {
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.poster .poster-content .poster-title {
+    font-weight: bold;
+    font-size: 2rem;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+}
+
+.poster .poster-content .poster-desc {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.poster .poster-content .poster-price {
+    margin: 0.5rem 0 0 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f06292;
+}
+
+.poster .poster-content .poster-price-old {
+    font-size: 1rem;
+    color: #888;
+    font-weight: 400;
+    text-decoration: line-through;
+    margin-left: 6px;
+}
+
+.poster .poster-content .btn-primary {
+    background-color: #f06292;
+    color: white;
+    width: 5.5rem;
+    height: 1.8rem;
+    margin-top: 0.75rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.poster .poster-content .btn-primary:hover {
+    background-color: #e91e8c;
+}
