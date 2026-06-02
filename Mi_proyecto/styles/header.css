@@ -1,0 +1,93 @@
+/*banner*/
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
+  background-color: #000;
+  color: white;
+}
+
+.banner a {
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+}
+
+.banner a:hover {
+  text-decoration: underline;
+}
+
+.banner-button {
+  border: 1px solid white;
+  background: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.2rem 0.6rem;
+  margin-left: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.banner-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  vertical-align: middle;
+}
+
+/*navbar*/
+.navbar {
+  padding-top: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .nav-main {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .nav-button {
+  text-transform: uppercase;
+  border: none;
+  background: none;
+  color: black;
+  cursor: pointer;
+}
+
+.navbar .nav-button:hover,
+.navbar .nav-button:active,
+.navbar .nav-button:focus {
+  border-bottom: 2px solid #222222;
+}
+
+.navbar .nav-brand {
+  margin-right: 2rem;
+  width: min-content;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.navbar .brand-image {
+  width: 8rem;
+}
+
+.navbar .icon-button {
+  border: 1px solid rgba(0, 0, 0, 0);
+  background: none;
+  cursor: pointer;
+}
+
+.navbar .icon-button:hover {
+  border: 1px solid #222222;
+}
+
+.navbar .nav-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
