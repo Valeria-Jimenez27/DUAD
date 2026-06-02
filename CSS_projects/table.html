@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billboard Hot 100</title>
+    <link rel="stylesheet" href="table.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="page-wrapper">
+      <header class="chart-header">
+        <h1 class="chart-title">BILLBOARD HOT 100<span class="tm">™</span></h1>
+        <div class="header-controls">
+          <div class="week-badge">WEEK OF MAY 16, 2026</div>
+          <div class="icon-group">
+            <button class="icon-btn" aria-label="Calendar">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </button>
+            <button class="icon-btn" aria-label="Info">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+            </button>
+            <button class="icon-btn" aria-label="Share">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <polyline points="16 6 12 2 8 6" />
+                <line x1="12" y1="2" x2="12" y2="15" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <table class="chart-table">
+          <thead>
+            <tr>
+              <th class="col-rank">THIS<br />WEEK</th>
+              <th class="col-art"></th>
+              <th class="col-move"></th>
+              <th class="col-song">SONG / ARTIST</th>
+              <th class="col-stat">LAST<br />WEEK</th>
+              <th class="col-stat">PEAK<br />POS.</th>
+              <th class="col-stat">WKS ON<br />CHART</th>
+              <th class="col-add"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rank 1 -->
+            <tr class="chart-row rank-1">
+              <td class="col-rank">
+                <span class="rank-number">1</span>
+              </td>
+              <td class="col-art">
+                <div class="album-art">
+                  <img
+                    src="https://i.scdn.co/image/ab67616d00001e0290958927fbba47a62c3e63f8"
+                    alt="Choosin' Texas cover"
+                  />
+                </div>
+              </td>
+              <td class="col-move">
+                <div class="movement">
+                  <svg
+                    class="arrow-right"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </div>
+              </td>
+              <td class="col-song">
+                <span class="star-badge">★</span>
+                <div class="song-info">
+                  <p class="song-title">Choosin' Texas</p>
+                  <p class="artist-name">Ella Langley</p>
+                </div>
+              </td>
+              <td class="col-stat stat-alt">1</td>
+              <td class="col-stat">1</td>
+              <td class="col-stat stat-alt">29</td>
+              <td class="col-add">
+                <button class="add-btn" aria-label="Add">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Rank 2 -->
+            <tr class="chart-row">
+              <td class="col-rank">
+                <span class="rank-number">2</span>
+              </td>
+              <td class="col-art">
+                <div class="album-art">
+                  <img
+                    src="https://i.scdn.co/image/ab67616d00001e0244cfd85001629f8f476d2723"
+                    alt="Be Her cover"
+                  />
+                </div>
+              </td>
+              <td class="col-move">
+                <div class="movement up">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon points="12 4 20 18 4 18" />
+                  </svg>
+                </div>
+              </td>
+              <td class="col-song">
+                <span class="star-badge">★</span>
+                <div class="song-info">
+                  <p class="song-title">Be Her</p>
+                  <p class="artist-name">Ella Langley</p>
+                </div>
+              </td>
+              <td class="col-stat stat-alt">5</td>
+              <td class="col-stat">2</td>
+              <td class="col-stat stat-alt">12</td>
+              <td class="col-add">
+                <button class="add-btn" aria-label="Add">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Rank 3 -->
+            <tr class="chart-row">
+              <td class="col-rank">
+                <span class="rank-number">3</span>
+              </td>
+              <td class="col-art">
+                <div class="album-art">
+                  <img
+                    src="https://i.scdn.co/image/ab67616d00001e02c25b53f0a34aa1bb4f77cb3e"
+                    alt="Drop Dead cover"
+                  />
+                </div>
+              </td>
+              <td class="col-move">
+                <div class="movement up">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon points="12 4 20 18 4 18" />
+                  </svg>
+                </div>
+              </td>
+              <td class="col-song">
+                <span class="star-badge">★</span>
+                <div class="song-info">
+                  <p class="song-title">Drop Dead</p>
+                  <p class="artist-name">Olivia Rodrigo</p>
+                </div>
+              </td>
+              <td class="col-stat stat-alt">4</td>
+              <td class="col-stat">1</td>
+              <td class="col-stat stat-alt">3</td>
+              <td class="col-add">
+                <button class="add-btn" aria-label="Add">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Rank 4 -->
+            <tr class="chart-row">
+              <td class="col-rank">
+                <span class="rank-number">4</span>
+              </td>
+              <td class="col-art">
+                <div class="album-art">
+                  <img
+                    src="https://i.scdn.co/image/ab67616d00001e02e3d69e17dde129037a1f09e2"
+                    alt="Man I Need cover"
+                  />
+                </div>
+              </td>
+              <td class="col-move">
+                <div class="movement down">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon points="12 20 4 6 20 6" />
+                  </svg>
+                </div>
+              </td>
+              <td class="col-song">
+                <span class="star-badge" style="visibility: hidden">★</span>
+                <div class="song-info">
+                  <p class="song-title">Man I Need</p>
+                  <p class="artist-name">Olivia Dean</p>
+                </div>
+              </td>
+              <td class="col-stat stat-alt">3</td>
+              <td class="col-stat">2</td>
+              <td class="col-stat stat-alt">37</td>
+              <td class="col-add">
+                <button class="add-btn" aria-label="Add">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+  </body>
+</html>
