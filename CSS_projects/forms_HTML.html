@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="forms.css" />
+  </head>
+  <body>
+    <form action="https://dummyjson.com/test" method="POST">
+    <h1>Formulario de Votación</h1>
+    <p>Complete todos los campos para emitir su voto.</p>
+
+    <label for="nombre">Nombre completo</label>
+    <br />
+    <input type="text" id="nombre" name="nombreCompleto" placeholder="Nombre completo *" />
+    <br />
+
+    <label for="correo-electronico">Correo electrónico</label>
+    <br />
+    <input type="email" id="correo-electronico" name="correo" placeholder="Correo electrónico *" />
+    <br />
+
+    <label for="identificacion">Número de identificación</label>
+    <br />
+    <input type="text" id="identificacion" name="numIdentificacion" placeholder="Número de identificación *" />
+    <br />
+
+    <label for="telefono">Teléfono</label>
+    <br />
+    <input type="tel" id="telefono" name="telefono" placeholder="Teléfono *" />
+    <br />
+
+    <p>Seleccione un candidato:</p>
+
+<div class="radio-group">
+  <div class="radio-option">
+    <input type="radio" id="c1" name="candidato" value="candidato1" />
+    <label for="c1">Candidato #1</label>
+  </div>
+  <div class="radio-option">
+    <input type="radio" id="c2" name="candidato" value="candidato2" />
+    <label for="c2">Candidato #2</label>
+  </div>
+  <div class="radio-option">
+    <input type="radio" id="c3" name="candidato" value="candidato3" />
+    <label for="c3">Candidato #3</label>
+  </div>
+</div>
+
+    <input type="submit" value="Confirmar voto"/>
+  </form>
+  </body>
+</html>

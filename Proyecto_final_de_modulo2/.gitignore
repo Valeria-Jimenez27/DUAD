@@ -1,0 +1,34 @@
+# Ignorar el entorno virtual
+venv/
+
+# Ignorar archivos compilados de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignorar configuraciones locales de VS Code
+.vscode/
+
+# Ignorar archivos de logs
+*.log
+
+# Ignorar credenciales
+.env
+
+# RSA Keys
+private.pem
+public.pem
+
+# Database
+*.db
+*.sqlite3
+
+# PyCharm
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
