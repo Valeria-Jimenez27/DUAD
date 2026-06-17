@@ -1,11 +1,14 @@
 from flask import request, jsonify
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.exc import IntegrityError
 
 from app.routes import api_bp
 from app.database import get_db
 from app.models import Platform, Genre, Series, UserSeries, series_genres
 from app.schemas import series_to_dict
+
+VALID_STATUSES = {"completed", "watching", "dropped", "on_hold", "plan_to_watch"}
 
 
 @api_bp.route("/series")
@@ -86,6 +89,95 @@ def get_series():
             "pages": pages,
         },
     })
+
+
+@api_bp.route("/series", methods=["POST"])
+def create_series():
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Se esperaba un cuerpo JSON"}), 400
+
+    title = body.get("title", "").strip()
+    if not title:
+        return jsonify({"error": "'title' es requerido"}), 400
+
+    year_start = body.get("year_start")
+    if year_start is None:
+        return jsonify({"error": "'year_start' es requerido"}), 400
+    if not isinstance(year_start, int):
+        return jsonify({"error": "'year_start' debe ser un entero"}), 400
+
+    year_end = body.get("year_end")
+    if year_end is not None and not isinstance(year_end, int):
+        return jsonify({"error": "'year_end' debe ser un entero"}), 400
+
+    total_seasons = body.get("total_seasons")
+    if total_seasons is not None and not isinstance(total_seasons, int):
+        return jsonify({"error": "'total_seasons' debe ser un entero"}), 400
+
+    platform_id = body.get("platform_id")
+    genre_ids = body.get("genre_ids", [])
+    if not isinstance(genre_ids, list):
+        return jsonify({"error": "'genre_ids' debe ser una lista"}), 400
+
+    tracking_data = body.get("tracking")
+    if tracking_data is not None:
+        status = tracking_data.get("status", "").strip()
+        if status not in VALID_STATUSES:
+            return jsonify({
+                "error": f"'status' inválido. Valores válidos: {', '.join(sorted(VALID_STATUSES))}"
+            }), 400
+        rating = tracking_data.get("rating")
+        if rating is not None and (not isinstance(rating, int) or not (1 <= rating <= 5)):
+            return jsonify({"error": "'rating' debe ser un entero entre 1 y 5"}), 400
+
+    try:
+        with get_db() as db:
+            platform = None
+            if platform_id:
+                platform = db.get(Platform, platform_id)
+                if platform is None:
+                    return jsonify({"error": f"Plataforma con id '{platform_id}' no encontrada"}), 404
+
+            genres = []
+            for gid in genre_ids:
+                genre = db.get(Genre, gid)
+                if genre is None:
+                    return jsonify({"error": f"Género con id '{gid}' no encontrado"}), 404
+                genres.append(genre)
+
+            series = Series(
+                title=title,
+                year_start=year_start,
+                year_end=year_end,
+                total_seasons=total_seasons,
+                platform=platform,
+                genres=genres,
+            )
+            db.add(series)
+            db.flush()
+
+            if tracking_data:
+                db.add(UserSeries(
+                    series_id=series.id,
+                    status=tracking_data["status"],
+                    seasons_watched=tracking_data.get("seasons_watched"),
+                    episodes_watched=tracking_data.get("episodes_watched"),
+                    rating=tracking_data.get("rating"),
+                    review=tracking_data.get("review"),
+                ))
+                db.flush()
+
+            data = series_to_dict(series)
+
+    except IntegrityError:
+        return jsonify({"error": "Ya existe una serie con ese título"}), 409
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detail": str(e)}), 500
+
+    return jsonify(data), 201
 
 
 @api_bp.route("/series/<string:series_id>")
