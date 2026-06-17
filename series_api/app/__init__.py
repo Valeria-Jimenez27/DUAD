@@ -13,6 +13,24 @@ def create_app() -> Flask:
     app.config["DATABASE_URL"] = os.environ.get("DATABASE_URL", "")
 
     # Importar rutas primero: esto registra los modelos en Base.metadata
+    @app.route("/")
+    def index():
+        from flask import jsonify
+        return jsonify({
+            "name": "Series API",
+            "version": "1.0",
+            "description": "API personal para trackear series de TV",
+            "endpoints": {
+                "series": "/api/v1/series",
+                "series_detail": "/api/v1/series/<id>",
+                "tracking": "/api/v1/series/<id>/tracking",
+                "stats": "/api/v1/stats",
+                "platforms": "/api/v1/platforms",
+                "genres": "/api/v1/genres",
+                "login": "/api/v1/auth/login",
+            }
+        })
+
     from app.routes import api_bp
     app.register_blueprint(api_bp)
 
