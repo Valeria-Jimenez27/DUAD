@@ -18,6 +18,10 @@ class Base(DeclarativeBase):
 
 _DATABASE_URL = os.environ.get("DATABASE_URL")
 
+# Render (y Heroku) usan "postgres://" pero SQLAlchemy 2.0 requiere "postgresql://"
+if _DATABASE_URL and _DATABASE_URL.startswith("postgres://"):
+    _DATABASE_URL = _DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 if _DATABASE_URL:
     engine = create_engine(_DATABASE_URL, echo=False)
     SessionLocal = sessionmaker(bind=engine)
