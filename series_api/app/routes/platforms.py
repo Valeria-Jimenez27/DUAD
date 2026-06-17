@@ -9,6 +9,19 @@ from app.schemas import platform_to_dict
 from app.auth import require_auth
 
 
+@api_bp.route("/platforms")
+def get_platforms():
+    try:
+        with get_db() as db:
+            platforms = db.execute(select(Platform).order_by(Platform.name)).scalars().all()
+            data = [platform_to_dict(p) for p in platforms]
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detail": str(e)}), 500
+    return jsonify(data)
+
+
 @api_bp.route("/platforms", methods=["POST"])
 @require_auth
 def create_platform():

@@ -2,6 +2,8 @@ import re
 from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError
 
+from sqlalchemy import select
+
 from app.routes import api_bp
 from app.database import get_db
 from app.models import Genre
@@ -11,6 +13,19 @@ from app.auth import require_auth
 
 def _slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+@api_bp.route("/genres")
+def get_genres():
+    try:
+        with get_db() as db:
+            genres = db.execute(select(Genre).order_by(Genre.name)).scalars().all()
+            data = [genre_to_dict(g) for g in genres]
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detail": str(e)}), 500
+    return jsonify(data)
 
 
 @api_bp.route("/genres", methods=["POST"])
