@@ -6,6 +6,7 @@ from app.routes import api_bp
 from app.database import get_db
 from app.models import Genre
 from app.schemas import genre_to_dict
+from app.auth import require_auth
 
 
 def _slugify(text: str) -> str:
@@ -13,6 +14,7 @@ def _slugify(text: str) -> str:
 
 
 @api_bp.route("/genres", methods=["POST"])
+@require_auth
 def create_genre():
     body = request.get_json(silent=True)
     if not body:
@@ -41,6 +43,7 @@ def create_genre():
 
 
 @api_bp.route("/genres/<string:genre_id>", methods=["PATCH"])
+@require_auth
 def update_genre(genre_id: str):
     body = request.get_json(silent=True)
     if not body:
@@ -77,6 +80,7 @@ def update_genre(genre_id: str):
 
 
 @api_bp.route("/genres/<string:genre_id>", methods=["DELETE"])
+@require_auth
 def delete_genre(genre_id: str):
     try:
         with get_db() as db:

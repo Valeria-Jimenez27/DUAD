@@ -7,6 +7,7 @@ from app.routes import api_bp
 from app.database import get_db
 from app.models import Platform, Genre, Series, UserSeries, series_genres
 from app.schemas import series_to_dict, tracking_to_dict
+from app.auth import require_auth
 
 VALID_STATUSES = {"completed", "watching", "dropped", "on_hold", "plan_to_watch"}
 
@@ -92,6 +93,7 @@ def get_series():
 
 
 @api_bp.route("/series", methods=["POST"])
+@require_auth
 def create_series():
     body = request.get_json(silent=True)
     if not body:
@@ -209,6 +211,7 @@ def get_series_by_id(series_id: str):
 
 
 @api_bp.route("/series/<string:series_id>", methods=["PATCH"])
+@require_auth
 def update_series(series_id: str):
     body = request.get_json(silent=True)
     if not body:
@@ -286,6 +289,7 @@ def update_series(series_id: str):
 
 
 @api_bp.route("/series/<string:series_id>/tracking", methods=["PATCH"])
+@require_auth
 def upsert_tracking(series_id: str):
     body = request.get_json(silent=True)
     if not body:
@@ -349,6 +353,7 @@ def upsert_tracking(series_id: str):
 
 
 @api_bp.route("/series/<string:series_id>", methods=["DELETE"])
+@require_auth
 def delete_series(series_id: str):
     try:
         with get_db() as db:

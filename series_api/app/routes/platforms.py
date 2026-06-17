@@ -6,9 +6,11 @@ from app.routes import api_bp
 from app.database import get_db
 from app.models import Platform, Series
 from app.schemas import platform_to_dict
+from app.auth import require_auth
 
 
 @api_bp.route("/platforms", methods=["POST"])
+@require_auth
 def create_platform():
     body = request.get_json(silent=True)
     if not body:
@@ -35,6 +37,7 @@ def create_platform():
 
 
 @api_bp.route("/platforms/<string:platform_id>", methods=["PATCH"])
+@require_auth
 def update_platform(platform_id: str):
     body = request.get_json(silent=True)
     if not body:
@@ -63,6 +66,7 @@ def update_platform(platform_id: str):
 
 
 @api_bp.route("/platforms/<string:platform_id>", methods=["DELETE"])
+@require_auth
 def delete_platform(platform_id: str):
     try:
         with get_db() as db:
