@@ -35,7 +35,7 @@ class Series(Base):
         "Genre", secondary=series_genres, back_populates="series"
     )
     user_series: Mapped[Optional["UserSeries"]] = relationship(
-        "UserSeries", back_populates="series", uselist=False
+        "UserSeries", back_populates="series", uselist=False, cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

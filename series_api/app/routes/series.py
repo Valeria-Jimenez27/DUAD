@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from app.routes import api_bp
 from app.database import get_db
 from app.models import Platform, Genre, Series, UserSeries, series_genres
-from app.schemas import series_to_dict
+from app.schemas import series_to_dict, tracking_to_dict
 
 VALID_STATUSES = {"completed", "watching", "dropped", "on_hold", "plan_to_watch"}
 
@@ -206,6 +206,163 @@ def get_series_by_id(series_id: str):
         return jsonify({"error": f"Serie con id '{series_id}' no encontrada"}), 404
 
     return jsonify(data)
+
+
+@api_bp.route("/series/<string:series_id>", methods=["PATCH"])
+def update_series(series_id: str):
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Se esperaba un cuerpo JSON"}), 400
+
+    year_end = body.get("year_end")
+    if "year_end" in body and year_end is not None and not isinstance(year_end, int):
+        return jsonify({"error": "'year_end' debe ser un entero"}), 400
+
+    total_seasons = body.get("total_seasons")
+    if "total_seasons" in body and total_seasons is not None and not isinstance(total_seasons, int):
+        return jsonify({"error": "'total_seasons' debe ser un entero"}), 400
+
+    genre_ids = body.get("genre_ids")
+    if genre_ids is not None and not isinstance(genre_ids, list):
+        return jsonify({"error": "'genre_ids' debe ser una lista"}), 400
+
+    try:
+        with get_db() as db:
+            stmt = (
+                select(Series)
+                .options(joinedload(Series.platform), selectinload(Series.genres), joinedload(Series.user_series))
+                .where(Series.id == series_id)
+            )
+            series = db.execute(stmt).unique().scalar_one_or_none()
+            if series is None:
+                return jsonify({"error": f"Serie '{series_id}' no encontrada"}), 404
+
+            if "title" in body:
+                title = body["title"].strip()
+                if not title:
+                    return jsonify({"error": "'title' no puede estar vacío"}), 400
+                series.title = title
+
+            if "year_start" in body:
+                if not isinstance(body["year_start"], int):
+                    return jsonify({"error": "'year_start' debe ser un entero"}), 400
+                series.year_start = body["year_start"]
+
+            if "year_end" in body:
+                series.year_end = year_end
+
+            if "total_seasons" in body:
+                series.total_seasons = total_seasons
+
+            if "platform_id" in body:
+                pid = body["platform_id"]
+                if pid is None:
+                    series.platform = None
+                    series.platform_id = None
+                else:
+                    platform = db.get(Platform, pid)
+                    if platform is None:
+                        return jsonify({"error": f"Plataforma '{pid}' no encontrada"}), 404
+                    series.platform = platform
+
+            if genre_ids is not None:
+                genres = []
+                for gid in genre_ids:
+                    genre = db.get(Genre, gid)
+                    if genre is None:
+                        return jsonify({"error": f"Género '{gid}' no encontrado"}), 404
+                    genres.append(genre)
+                series.genres = genres
+
+            db.flush()
+            data = series_to_dict(series)
+
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detail": str(e)}), 500
+
+    return jsonify(data)
+
+
+@api_bp.route("/series/<string:series_id>/tracking", methods=["PATCH"])
+def upsert_tracking(series_id: str):
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Se esperaba un cuerpo JSON"}), 400
+
+    if "status" in body:
+        status = body["status"].strip() if body["status"] else ""
+        if status not in VALID_STATUSES:
+            return jsonify({
+                "error": f"'status' inválido. Valores válidos: {', '.join(sorted(VALID_STATUSES))}"
+            }), 400
+
+    if "rating" in body and body["rating"] is not None:
+        rating = body["rating"]
+        if not isinstance(rating, int) or not (1 <= rating <= 5):
+            return jsonify({"error": "'rating' debe ser un entero entre 1 y 5"}), 400
+
+    try:
+        with get_db() as db:
+            series = db.get(Series, series_id)
+            if series is None:
+                return jsonify({"error": f"Serie '{series_id}' no encontrada"}), 404
+
+            tracking = series.user_series
+            if tracking is None:
+                status = body.get("status", "").strip()
+                if status not in VALID_STATUSES:
+                    return jsonify({
+                        "error": f"'status' es requerido para crear el tracking. Valores: {', '.join(sorted(VALID_STATUSES))}"
+                    }), 400
+                tracking = UserSeries(
+                    series_id=series_id,
+                    status=status,
+                    seasons_watched=body.get("seasons_watched"),
+                    episodes_watched=body.get("episodes_watched"),
+                    rating=body.get("rating"),
+                    review=body.get("review"),
+                )
+                db.add(tracking)
+            else:
+                if "status" in body:
+                    tracking.status = body["status"].strip()
+                if "seasons_watched" in body:
+                    tracking.seasons_watched = body["seasons_watched"]
+                if "episodes_watched" in body:
+                    tracking.episodes_watched = body["episodes_watched"]
+                if "rating" in body:
+                    tracking.rating = body["rating"]
+                if "review" in body:
+                    tracking.review = body["review"]
+
+            db.flush()
+            data = tracking_to_dict(tracking)
+
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detail": str(e)}), 500
+
+    return jsonify(data)
+
+
+@api_bp.route("/series/<string:series_id>", methods=["DELETE"])
+def delete_series(series_id: str):
+    try:
+        with get_db() as db:
+            series = db.get(Series, series_id)
+            if series is None:
+                return jsonify({"error": f"Serie '{series_id}' no encontrada"}), 404
+            db.delete(series)  # cascade elimina el user_series asociado
+
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno del servidor", "detail": str(e)}), 500
+
+    return "", 204
 
 
 @api_bp.route("/stats")
