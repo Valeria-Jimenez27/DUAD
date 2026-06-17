@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registration Form</title>
+  </head>
+  <body>
+    <div>
+      <h2>Registration Form</h2>
+
+      <input type="text" id="first-name" placeholder="First name" /><br><br>
+      <input type="text" id="last-name" placeholder="Last name" /><br><br>
+      <input type="email" id="email" placeholder="Email" /><br><br>
+      <input type="password" id="password" placeholder="Password" /><br><br>
+
+      <p>Are you an employee?</p>
+      <label>
+        <input type="radio" name="employee" id="radio-yes" value="yes" />
+        Yes
+      </label>
+      <label>
+        <input type="radio" name="employee" id="radio-no" value="no" />
+        No
+      </label>
+
+      <div id="employment-field" style="display: none;">
+        <br><br>
+        <input type="text" id="employment" placeholder="Company name" />
+      </div>
+
+      <br><br>
+      <button id="submit-button">Submit</button>
+    </div>
+
+    <script>
+      const radioYes = document.getElementById('radio-yes')
+      const radioNo = document.getElementById('radio-no')
+      const submitButton = document.getElementById('submit-button')
+
+      const showEmployment = () => {
+        const employmentField = document.getElementById('employment-field')
+        employmentField.style.display = 'block'
+      }
+
+      const hideEmployment = () => {
+        const employmentField = document.getElementById('employment-field')
+        employmentField.style.display = 'none'
+      }
+
+      const handleSubmit = () => {
+        alert('Form submitted!')
+      }
+
+      radioYes.addEventListener('change', showEmployment)
+      radioNo.addEventListener('change', hideEmployment)
+      submitButton.addEventListener('click', handleSubmit)
+    </script>
+  </body>
+</html>

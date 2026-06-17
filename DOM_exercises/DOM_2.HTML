@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Show text with DOM</title>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="my-input" placeholder="Write something..." />
+      <button id="show-button">Show</button>
+      <p id="my-text"></p>
+    </div>
+
+    <script>
+      const btn = document.getElementById("show-button");
+
+      const showText = () => {
+        const input = document.getElementById("my-input");
+        const text = document.getElementById("my-text");
+
+        text.innerHTML = input.value;
+        input.value = "";
+      };
+
+      btn.addEventListener("click", showText);
+    </script>
+  </body>
+</html>
