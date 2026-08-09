@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Crear cuenta</h1>
+
+    <form id="formRegistro">
+        <input type="text" id="inputNombre" placeholder="Nombre completo" required>
+        <input type="password" id="inputPassword" placeholder="Contraseña" required>
+        <button type="submit">Registrarme</button>
+    </form>
+
+    <p id="mensajeError" class="error"></p>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
