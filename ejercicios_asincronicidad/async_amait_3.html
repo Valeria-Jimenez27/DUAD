@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Search</title>
+</head>
+
+<body>
+    <input type="number" id="userId" placeholder="User ID" />
+    <button id="searchBtn">Search</button>
+
+    <div id="result"></div>
+
+    <script>
+        const button = document.getElementById("searchBtn");
+        const resultDiv = document.getElementById("result");
+
+        button.addEventListener("click", async () => {
+            const id = document.getElementById("userId").value;
+            resultDiv.textContent = "Loading...";
+
+            try {
+                const response = await fetch(`https://reqres.in/api/users/${id}`, {
+                    headers: { "x-api-key": "pro_8a05f48f5e089a6ee6f70a879ff60a3d6fce85cfe3c426dbf2339fc827d24307" }
+                });
+
+                if (!response.ok) {
+                    throw new Error("User not found");
+                }
+
+                const data = await response.json();
+                const { first_name, last_name, email } = data.data;
+
+                resultDiv.innerHTML = `
+                    <p>First name: ${first_name}</p>
+                    <p>Last name: ${last_name}</p>
+                    <p>Email: ${email}</p>
+                `;
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+
+</html>

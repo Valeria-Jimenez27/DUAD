@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Random Color</title>
+    <style>
+        #text-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            max-width: 480px;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="text-box">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+
+    <button id="color-button">Change color</button>
+
+    <script>
+        const colors = ["red", "blue", "green", "yellow", "cyan", "pink"];
+
+        const changeColor = () => {
+            const textBox = document.getElementById("text-box");
+            const randomIndex = Math.floor(Math.random() * colors.length);
+            textBox.style.backgroundColor = colors[randomIndex];
+        };
+
+        const button = document.getElementById("color-button");
+        button.addEventListener("click", changeColor);
+    </script>
+
+</body>
+
+</html>
