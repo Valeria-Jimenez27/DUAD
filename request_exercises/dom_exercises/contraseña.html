@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cambiar contraseña</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Cambiar contraseña</h1>
+
+    <form id="formCambio">
+        <input type="text" id="inputId" placeholder="ID de usuario" required>
+        <input type="password" id="inputPasswordActual" placeholder="Contraseña actual" required>
+        <input type="password" id="inputPasswordNueva" placeholder="Contraseña nueva" required>
+        <input type="password" id="inputPasswordConfirmar" placeholder="Confirmar contraseña nueva" required>
+        <button type="submit">Cambiar contraseña</button>
+    </form>
+
+    <p id="mensaje"></p>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

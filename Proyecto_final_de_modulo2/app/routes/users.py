@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.database.engine import SessionLocal
-from app.models.DB import User
+from app.models.DB import User, Customer
 from app.services.auth import token_required, admin_required, generate_token
 import bcrypt
 
@@ -43,10 +43,14 @@ def login():
         if not user or not bcrypt.checkpw(data["password"].encode(), user.password.encode()):
             return jsonify({"error": "Invalid email or password"}), 401
         token = generate_token(user)
+
+        customer = db.query(Customer).filter(Customer.email == user.email).first()
+
         return jsonify({
             "message": "Login successful",
             "token": token,
-            "role": user.role
+            "role": user.role,
+            "customer_id": customer.customer_id if customer else None
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
