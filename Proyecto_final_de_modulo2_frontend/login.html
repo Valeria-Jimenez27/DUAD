@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión | Vale's Pet Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+</head>
+
+<body>
+    <header class="site-header container">
+        <a href="index.html" class="brand">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
+        </a>
+        <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="catalog.html">Catálogo</a>
+            <a href="index.html#footer-contact">Contacto</a>
+        </nav>
+        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+            <span class="user-status" id="user-status">Usuario: Invitado</span>
+            <div class="auth-links" id="auth-links"></div>
+        </div>
+    </header>
+
+    <main class="section container">
+        <form class="form-card" id="login-form" novalidate>
+            <h1 style="font-size: var(--fs-xl); margin-bottom: var(--space-lg);">Iniciar sesión</h1>
+
+            <div id="form-alert" class="alert alert--error" hidden></div>
+
+            <div class="field">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" autocomplete="email" required />
+                <span class="field-error" id="email-error"></span>
+            </div>
+
+            <div class="field">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required />
+                <span class="field-error" id="password-error"></span>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" id="submit-btn">Iniciar sesión</button>
+
+            <p class="text-muted" style="margin-top: var(--space-md); text-align: center;">
+                ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
+            </p>
+        </form>
+    </main>
+
+    <script type="module" src="js/header.js"></script>
+    <script type="module" src="js/login.js"></script>
+</body>
+
+</html>

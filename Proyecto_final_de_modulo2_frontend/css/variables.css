@@ -1,0 +1,49 @@
+:root {
+    /* Color — paleta pastel */
+    --color-lilac: #c7b8ea;
+    --color-lilac-dark: #9c87d1;
+    --color-pink: #fbc7da;
+    --color-sky: #aee3f5;
+    --color-yellow: #fde9a8;
+
+    --color-bg: #fffbf6;
+    --color-bg-alt: #f5f0fc;
+    --color-surface: #ffffff;
+
+    --color-text: #3e3556;
+    --color-text-muted: #7a7191;
+
+    --color-success: #8fd9b6;
+    --color-success-dark: #5fb98f;
+    --color-error: #f4a0a0;
+    --color-error-dark: #d96f6f;
+
+    /* Tipografía */
+    --font-display: "Baloo 2", system-ui, sans-serif;
+    --font-body: "Nunito Sans", system-ui, sans-serif;
+
+    --fs-xs: 0.75rem;
+    --fs-sm: 0.875rem;
+    --fs-base: 1rem;
+    --fs-md: 1.125rem;
+    --fs-lg: 1.5rem;
+    --fs-xl: 2rem;
+    --fs-2xl: 2.75rem;
+
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 4rem;
+
+    /* Bordes y sombras */
+    --radius-sm: 0.5rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+    --shadow-soft: 0 0.25rem 1rem rgba(62, 53, 86, 0.08);
+    --shadow-hover: 0 0.5rem 1.5rem rgba(62, 53, 86, 0.14);
+
+    /* Layout */
+    --container-max: 75rem;
+}

@@ -1,0 +1,472 @@
+/* ==========================================================================
+   layout.css — Contenedores y utilidades reutilizables (Flexbox / Grid)
+   ========================================================================== */
+
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
+}
+
+/* Header general del sitio */
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-md);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+/* Marca / logo del header */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.brand:hover {
+    text-decoration: none;
+}
+
+.brand__logo {
+    width: 150px;
+    height: 55px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Enlace de navegación activo (página actual) */
+.site-nav a.is-active {
+    color: var(--color-lilac-dark);
+    font-weight: 700;
+    border-bottom: 0.15rem solid var(--color-lilac-dark);
+    padding-bottom: 0.25rem;
+    text-decoration: none;
+}
+
+/* Indicador de usuario (derecha del header) */
+.user-status {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+}
+
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* Barra de anuncio (arriba del header) */
+.announcement-bar {
+    background-color: var(--color-lilac);
+    color: var(--color-text);
+    text-align: center;
+    font-size: var(--fs-sm);
+    padding: 0.5rem 1rem;
+}
+
+/* Buscador dentro del header */
+.search-input {
+    width: min(16rem, 100%);
+    padding: 0.5em 1em;
+    border: 0.1rem solid var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+}
+
+.search-input:focus {
+    border-color: var(--color-lilac);
+}
+
+.icon-link {
+    font-size: var(--fs-lg);
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+.icon-link:hover {
+    text-decoration: none;
+    color: var(--color-lilac-dark);
+}
+
+/* Grid de categorías dinámicas (landing) */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-md);
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    text-align: center;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.category-card:hover {
+    border-color: var(--color-yellow);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-0.2rem);
+    text-decoration: none;
+}
+
+.category-card__icon {
+    font-size: var(--fs-xl);
+}
+
+/* Footer multi-columna */
+.site-footer {
+    background-color: color-mix(in srgb,
+            var(--color-yellow) 60%,
+            white);
+    padding-block: var(--space-2xl) var(--space-lg);
+
+}
+
+.footer-grid {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit,
+            minmax(11rem, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+
+}
+
+.footer-col h3 {
+    font-size: var(--fs-base);
+    margin-bottom: var(--space-sm);
+
+}
+
+.footer-col a,
+.footer-col p {
+    display: block;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+    text-decoration: none;
+
+}
+
+.footer-col a:hover {
+    color: var(--color-lilac-dark);
+    text-decoration: none;
+
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: var(--space-lg);
+    border-top: 0.06rem solid rgba(62,
+            53,
+            86,
+            0.1);
+
+}
+
+/* Filas del carrito */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding-block: var(--space-md);
+    border-bottom: 0.06rem solid var(--color-bg-alt);
+}
+
+.cart-item__image {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.cart-item__info {
+    flex: 1;
+}
+
+.cart-item__remove {
+    background: none;
+    border: none;
+    color: var(--color-error-dark);
+    cursor: pointer;
+    font-size: var(--fs-sm);
+    padding: 0.5em;
+}
+
+.cart-item__remove:hover {
+    text-decoration: underline;
+}
+
+.cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--space-lg);
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+}
+
+/* Tabs del panel admin */
+.tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.tab-btn {
+    padding: 0.5em 1.25em;
+    border-radius: var(--radius-md);
+    border: 0.1rem solid var(--color-bg-alt);
+    background-color: var(--color-surface);
+    cursor: pointer;
+    font-family: var(--font-display);
+    color: var(--color-text);
+}
+
+.tab-btn.is-active {
+    background-color: var(--color-lilac);
+    border-color: var(--color-lilac);
+}
+
+/* Tablas del panel admin */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-table th,
+.admin-table td {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    border-bottom: 0.06rem solid var(--color-bg-alt);
+    font-size: var(--fs-sm);
+}
+
+.admin-table th {
+    font-family: var(--font-display);
+    background-color: var(--color-bg-alt);
+}
+
+.admin-table .btn {
+    padding: 0.4em 0.9em;
+    font-size: var(--fs-xs);
+}
+
+/* Mensaje de error en texto plano (sin caja), para formularios de auth */
+.alert--plain {
+    background: none;
+    padding: 0;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Pantalla de "Debes iniciar sesión para continuar" */
+.access-restricted {
+    max-width: 26rem;
+    margin-inline: auto;
+    margin-top: var(--space-2xl);
+    padding: var(--space-xl);
+    text-align: center;
+    border: 0.06rem solid var(--color-bg-alt);
+    border-radius: var(--radius-lg);
+}
+
+.access-restricted__icon {
+    font-size: var(--fs-2xl);
+    margin-bottom: var(--space-md);
+}
+
+.access-restricted h2 {
+    margin-bottom: var(--space-sm);
+}
+
+/* Barra de búsqueda + filtro sobre el catálogo */
+.catalog-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.catalog-toolbar .search-input {
+    width: min(20rem, 100%);
+}
+
+.catalog-toolbar__filter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+}
+
+/* Layout de dos columnas para carrito y checkout (más ancha la principal) */
+.cart-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    align-items: start;
+}
+
+@media (min-width: 48rem) {
+    .cart-layout {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.summary-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Tarjeta individual de producto en el carrito */
+.cart-item-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    box-shadow: var(--shadow-soft);
+}
+
+.cart-item-card__image {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.cart-item-card__info {
+    flex: 1;
+}
+
+.cart-item-card__remove {
+    background: none;
+    border: none;
+    color: var(--color-error-dark);
+    cursor: pointer;
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+}
+
+.cart-item-card__remove:hover {
+    text-decoration: underline;
+}
+
+/* Tarjeta contenedora del detalle de producto individual */
+.product-detail-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    border: 0.06rem solid var(--color-bg-alt);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+}
+
+@media (min-width: 48rem) {
+    .product-detail-card {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.product-detail-card__image-frame {
+    border: 0.06rem solid var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Círculo con check de compra finalizada */
+.success-icon-circle {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-inline: auto;
+    margin-bottom: var(--space-md);
+    border: 0.15rem solid var(--color-lilac-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fs-xl);
+    color: var(--color-lilac-dark);
+}
+
+/* Grid responsive para el catálogo de productos */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--space-lg);
+}
+
+/* Flex genérico centrado (formularios, estados vacíos, confirmaciones) */
+.flex-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Tarjeta de formulario (login, registro) */
+.form-card {
+    width: min(100%, 26rem);
+    margin-inline: auto;
+    padding: var(--space-xl);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Distribución de dos columnas (ej. producto individual: imagen + info) */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+}
+
+@media (min-width: 48rem) {
+    .two-col {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.section {
+    padding-block: var(--space-2xl);
+}
+
+.section--alt {
+    background-color: var(--color-bg-alt);
+}

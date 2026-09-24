@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Vale's Pet Store | Todo para tu mejor amigo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+</head>
+
+<body>
+
+    <div class="announcement-bar">
+        🚚 Envío gratis en compras superiores a $50 · Entrega en 24-48 horas
+    </div>
+
+    <header class="site-header container">
+
+        <a href="index.html" class="brand">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo">
+        </a>
+
+        <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+
+            <a href="index.html" class="is-active">
+                Inicio
+            </a>
+
+            <a href="catalog.html">
+                Catálogo
+            </a>
+
+            <a href="index.html#footer-contact">
+                Contacto
+            </a>
+
+        </nav>
+
+        <input type="search" id="header-search" class="search-input" placeholder="Buscar productos..."
+            aria-label="Buscar productos" />
+
+        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+
+            <a href="cart.html" class="icon-link" aria-label="Ver carrito" title="Carrito">
+
+                <span aria-hidden="true">
+                    🛒
+                </span>
+
+                <span class="cart-count" id="cart-count" hidden>
+                    0
+                </span>
+
+            </a>
+
+
+            <span class="user-status" id="user-status">
+
+                Usuario: Invitado
+
+            </span>
+
+
+            <div class="auth-links" id="auth-links">
+            </div>
+
+        </div>
+
+    </header>
+
+    <main>
+
+        <section class="section container">
+
+            <div class="hero-panel hero-panel--photo" style="background-image: url('img/products/hero-bg.jpg');">
+
+                <div class="hero-panel__overlay">
+
+                    <h1>
+                        Todo para tu mejor amigo
+                    </h1>
+
+                    <p class="hero-panel__text" style="
+                            margin-block: var(--space-md);
+                            color: var(--color-text);
+                        ">
+
+                        Alimento, farmacia, snacks y accesorios
+                        para perros y gatos, con stock real y
+                        actualizado al momento.
+
+                    </p>
+
+
+                    <a href="catalog.html" class="btn btn--primary">
+
+                        Ver catálogo
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="section section--alt">
+
+            <div class="container">
+
+                <h2 style="margin-bottom: var(--space-lg);">
+                    Compra por categoría
+                </h2>
+
+                <div id="category-grid" class="category-grid">
+
+                    <p class="text-muted" id="category-loading">
+
+                        Cargando categorías...
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="section trust">
+
+            <div class="container trust__content">
+
+
+                <div class="trust__item">
+
+                    <h2>
+                        Stock real, sin sorpresas
+                    </h2>
+
+                    <p>
+                        Cada producto muestra su disponibilidad
+                        al momento, para que sepas exactamente
+                        qué hay listo para enviar.
+                    </p>
+
+                </div>
+
+
+                <div class="trust__item">
+
+                    <h2>
+                        Compra en pocos pasos
+                    </h2>
+
+                    <p>
+                        Agrega al carrito, revisa tu resumen
+                        y confirma. Sin formularios eternos
+                        ni pasos innecesarios.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+                <div class="footer-col" id="footer-contact">
+
+                    <h3>
+                        Nuestra información
+                    </h3>
+
+                    <p>
+                        📍 Cartago, Costa Rica
+                    </p>
+
+                    <p>
+                        📞 8792-5886
+                    </p>
+
+                    <p>
+                        ✉️ admin@valespetstore.com
+                    </p>
+
+                </div>
+
+
+                <div class="footer-col">
+
+                    <h3>
+                        Enlaces rápidos
+                    </h3>
+
+                    <a href="catalog.html">
+                        Catálogo
+                    </a>
+
+                    <a href="cart.html">
+                        Carrito
+                    </a>
+
+                    <a href="login.html">
+                        Iniciar sesión
+                    </a>
+
+                    <a href="register.html">
+                        Crear cuenta
+                    </a>
+
+                </div>
+
+
+                <div class="footer-col">
+
+                    <h3>
+                        Síguenos
+                    </h3>
+
+                    <a href="#">
+                        Facebook
+                    </a>
+
+                    <a href="#">
+                        Instagram
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p class="text-muted">
+
+                    © 2026 Vale's Pet Store.
+                    Proyecto final Módulo 2 — DUAD.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script type="module" src="js/header.js">
+    </script>
+
+    <script type="module" src="js/index.js">
+    </script>
+
+</body>
+
+</html>

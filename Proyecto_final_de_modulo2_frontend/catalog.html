@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Catálogo | Vale's Pet Store</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+</head>
+
+<body>
+
+    <header class="site-header container">
+
+        <a href="index.html" class="brand">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo">
+        </a>
+
+        <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="catalog.html" class="is-active">Catálogo</a>
+            <a href="index.html#footer-contact">Contacto</a>
+        </nav>
+
+        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+
+            <a href="cart.html" class="btn btn--outline" aria-label="Ver carrito">
+                <span aria-hidden="true">🛒</span>
+                Carrito
+
+                <span class="cart-count" id="cart-count" hidden>0</span>
+            </a>
+
+            <span class="user-status" id="user-status">
+                Usuario: Invitado
+            </span>
+
+            <div class="auth-links" id="auth-links"></div>
+
+        </div>
+
+    </header>
+
+    <main class="section container">
+
+        <h1 style="margin-bottom: var(--space-lg);">
+            Catálogo de productos
+        </h1>
+
+        <div id="access-restricted" hidden></div>
+
+        <div id="page-content">
+
+            <div id="api-error" class="alert alert--error" hidden></div>
+
+            <div id="quick-add-alert" class="alert alert--error" hidden></div>
+
+            <div class="catalog-toolbar" id="catalog-toolbar" hidden>
+
+                <input type="search" id="search-input" class="search-input" placeholder="Buscar producto..."
+                    aria-label="Buscar producto" />
+
+                <label class="catalog-toolbar__filter">
+
+                    <input type="checkbox" id="available-only-checkbox" />
+
+                    Mostrar solo disponibles
+
+                </label>
+
+            </div>
+
+            <div id="catalog-loading" class="empty-state">
+                <p>Cargando productos...</p>
+            </div>
+
+            <div id="product-grid" class="product-grid" hidden></div>
+
+            <div id="empty-state" class="empty-state" hidden>
+
+                <div class="empty-state__icon" aria-hidden="true">
+                    🐾
+                </div>
+
+                <h2>Aún no hay productos disponibles</h2>
+
+                <p>
+                    Vuelve a intentarlo más tarde o contacta al
+                    administrador de la tienda.
+                </p>
+
+            </div>
+
+            <div id="no-results-state" class="empty-state" hidden>
+
+                <div class="empty-state__icon" aria-hidden="true">
+                    🙁
+                </div>
+
+                <h2>No se encontraron productos</h2>
+
+                <p>
+                    Intenta cambiar los filtros o la búsqueda.
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script type="module" src="js/header.js"></script>
+    <script type="module" src="js/catalog.js"></script>
+
+</body>
+
+</html>
