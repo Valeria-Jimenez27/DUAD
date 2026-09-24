@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Panel Admin | Vale's Pet Store</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+</head>
+
+<body>
+
+    <header class="site-header container">
+
+        <a href="index.html" class="brand">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
+        </a>
+
+        <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+            <a href="admin-panel.html" class="is-active">
+                Panel admin
+            </a>
+
+            <a href="catalog.html">
+                Catálogo
+            </a>
+
+            <a href="index.html#footer-contact">
+                Contacto
+            </a>
+        </nav>
+
+        <div class="admin-header-user">
+            <span class="user-status" id="user-status">
+                Usuario: Invitado
+            </span>
+
+            <div class="auth-links" id="auth-links"></div>
+        </div>
+
+    </header>
+
+    <main class="section container">
+
+        <!-- Mensaje cuando el usuario no tiene acceso -->
+        <div id="access-restricted" hidden></div>
+
+        <div id="page-content">
+
+            <div class="admin-page-header">
+
+                <h1>
+                    Panel de administración
+                </h1>
+
+                <a href="edit-product.html" class="btn btn--primary">
+                    + Nuevo producto
+                </a>
+
+            </div>
+
+            <div id="api-error" class="alert alert--error" hidden></div>
+
+            <!-- Pestañas -->
+            <div class="tabs">
+
+                <button type="button" class="tab-btn is-active" data-tab="inventory">
+                    Inventario
+                </button>
+
+                <button type="button" class="tab-btn" data-tab="sales">
+                    Ventas
+                </button>
+
+            </div>
+
+            <!-- Tabla de Inventario -->
+            <section id="tab-inventory">
+
+                <div id="inventory-loading" class="empty-state">
+                    <p>
+                        Cargando inventario...
+                    </p>
+                </div>
+
+                <div class="admin-table-wrapper">
+
+                    <table class="admin-table" id="inventory-table" hidden>
+
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Marca</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="inventory-body"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+            <!-- Tabla de Ventas -->
+            <section id="tab-sales" hidden>
+
+                <div id="sales-loading" class="empty-state">
+                    <p>
+                        Cargando ventas...
+                    </p>
+                </div>
+
+                <div class="admin-table-wrapper">
+
+                    <table class="admin-table" id="sales-table" hidden>
+
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="sales-body"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script type="module" src="js/header.js"></script>
+
+    <script type="module" src="js/adminPanel.js"></script>
+
+</body>
+
+</html>

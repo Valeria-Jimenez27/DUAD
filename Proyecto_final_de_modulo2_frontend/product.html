@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Producto | Vale's Pet Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+</head>
+
+<body>
+    <header class="site-header container">
+        <a href="index.html" class="brand">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo">
+        </a>
+        <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="catalog.html" class="is-active">Catálogo</a>
+            <a href="index.html#footer-contact">Contacto</a>
+        </nav>
+        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+            <a href="cart.html" class="icon-link" aria-label="Ver carrito" title="Carrito">🛒</a>
+            <span class="user-status" id="user-status">Usuario: Invitado</span>
+            <div class="auth-links" id="auth-links"></div>
+        </div>
+    </header>
+
+    <main class="section container">
+        <a href="catalog.html" class="text-muted" style="display: inline-block; margin-bottom: var(--space-lg);">←
+            Volver al catálogo</a>
+
+        <div id="access-restricted" hidden></div>
+
+        <div id="page-content">
+            <div id="api-error" class="alert alert--error" hidden></div>
+
+            <div id="product-loading" class="empty-state">
+                <p>Cargando producto...</p>
+            </div>
+
+            <div id="product-detail" class="product-detail-card" hidden>
+                <div class="product-detail-card__image-frame">
+                    <img id="product-image" src="" alt="" class="product-detail-card__image" />
+                </div>
+
+                <div>
+                    <span class="badge" id="product-stock-badge"></span>
+                    <h1 id="product-name" style="margin-block: var(--space-sm);"></h1>
+                    <p class="text-muted" id="product-meta"></p>
+                    <p class="product-card__price" style="font-size: var(--fs-xl); margin-block: var(--space-md);"
+                        id="product-price"></p>
+
+                    <div id="add-to-cart-alert" class="alert alert--error" hidden></div>
+
+                    <div class="field" style="max-width: 10rem;">
+                        <label for="quantity">Cantidad</label>
+                        <input type="number" id="quantity" min="1" value="1" />
+                    </div>
+
+                    <button type="button" class="btn btn--primary btn--full" id="add-to-cart-btn">Agregar al
+                        carrito</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/header.js"></script>
+    <script type="module" src="js/product.js"></script>
+</body>
+
+</html>

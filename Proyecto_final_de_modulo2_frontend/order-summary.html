@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resumen del pedido | Vale's Pet Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+</head>
+
+<body>
+    <header class="site-header container">
+        <a href="index.html" class="brand">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
+        </a>
+        <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="catalog.html">Catálogo</a>
+            <a href="index.html#footer-contact">Contacto</a>
+        </nav>
+        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+            <a href="cart.html" class="icon-link" aria-label="Ver carrito" title="Carrito">🛒</a>
+            <span class="user-status" id="user-status">Usuario: Invitado</span>
+            <div class="auth-links" id="auth-links"></div>
+        </div>
+    </header>
+
+    <main class="section container">
+        <h1 style="margin-bottom: var(--space-lg);">Resumen del pedido</h1>
+
+        <div id="access-restricted" hidden></div>
+
+        <div id="page-content">
+            <div id="api-error" class="alert alert--error" hidden></div>
+
+            <div id="summary-loading" class="empty-state">
+                <p>Cargando resumen...</p>
+            </div>
+
+            <div id="summary-content" class="two-col" hidden>
+                <form class="form-card" id="checkout-form" novalidate>
+                    <h2 style="margin-bottom: var(--space-md);">Información de compra</h2>
+
+                    <div id="form-alert" class="alert alert--error" hidden></div>
+
+                    <div class="field">
+                        <label for="billing-address">Dirección de entrega</label>
+                        <textarea id="billing-address" name="billingAddress" rows="3" required></textarea>
+                        <span class="field-error" id="billing-address-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label for="payment-method">Método de pago</label>
+                        <select id="payment-method" name="paymentMethod" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="tarjeta">Tarjeta de crédito/débito</option>
+                            <option value="sinpe">SINPE Móvil</option>
+                            <option value="efectivo">Efectivo contra entrega</option>
+                        </select>
+                        <span class="field-error" id="payment-method-error"></span>
+                    </div>
+
+                    <p class="text-muted" style="font-size: var(--fs-xs); margin-bottom: var(--space-md);">
+                        Esta información se utilizará para completar la compra.
+                    </p>
+
+                    <button type="submit" class="btn btn--primary btn--full" id="submit-btn">Confirmar compra</button>
+                    <a href="cart.html" class="btn btn--outline btn--full"
+                        style="margin-top: var(--space-sm);">Cancelar</a>
+                </form>
+
+                <div class="summary-card">
+                    <h2 style="margin-bottom: var(--space-md);">Resumen del pedido</h2>
+                    <div id="summary-items"></div>
+                    <div class="cart-summary">
+                        <span>Total</span>
+                        <span id="summary-total">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/header.js"></script>
+    <script type="module" src="js/orderSummary.js"></script>
+</body>
+
+</html>
