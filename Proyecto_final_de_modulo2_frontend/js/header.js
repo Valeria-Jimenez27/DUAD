@@ -3,29 +3,24 @@ import {
     isAdmin,
     getUserName,
     clearSession,
-    getLocalCartItems
+    getCartId
 } from "./storage.js";
 
+import { getCart } from "./orderService.js";
 
 /* =========================================================
    CONTADOR DEL CARRITO
    ========================================================= */
 
-function updateCartCount() {
-
+async function updateCartCount() {
     const cartCountEls =
         document.querySelectorAll(".cart-count");
 
     const cartLinks =
         document.querySelectorAll(".cart-link");
 
-
-    /*
-     * Si no hay sesión, ocultamos completamente
-     * el carrito y su contador.
-     */
+    /* Si no hay sesión, ocultamos el carrito */
     if (!isLoggedIn()) {
-
         cartCountEls.forEach((element) => {
             element.textContent = "0";
             element.hidden = true;
@@ -38,34 +33,57 @@ function updateCartCount() {
         return;
     }
 
+    let count = 0;
 
-    /*
-     * Usuario autenticado:
-     * mostramos la cantidad real.
-     */
-    const items =
-        getLocalCartItems();
+    try {
+        const cartId = getCartId();
 
-    const count =
-        items.reduce(
-            (total, item) =>
-                total +
-                Number(item.quantity || 0),
-            0
+        /*
+         * Si el usuario todavía no tiene carrito,
+         * no necesitamos crear uno solamente para
+         * mostrar el contador.
+         */
+        if (cartId) {
+            const cart = await getCart(cartId);
+
+            count = (cart.items || []).reduce(
+                (total, item) =>
+                    total + Number(item.quantity || 0),
+                0
+            );
+        }
+    } catch (error) {
+        console.error(
+            "No se pudo actualizar el contador del carrito:",
+            error
         );
 
+        count = 0;
+    }
+
+    /*
+     * Evitamos que una respuesta de la API que llegó
+     * tarde vuelva a mostrar el carrito después de cerrar sesión.
+     */
+    if (!isLoggedIn()) {
+        cartCountEls.forEach((element) => {
+            element.textContent = "0";
+            element.hidden = true;
+        });
+
+        cartLinks.forEach((link) => {
+            link.hidden = true;
+        });
+
+        return;
+    }
 
     cartCountEls.forEach((element) => {
-
         element.textContent = count;
-
-        element.hidden =
-            count === 0;
+        element.hidden = count === 0;
     });
 
-
     cartLinks.forEach((link) => {
-
         link.hidden = false;
     });
 }
@@ -76,44 +94,38 @@ function updateCartCount() {
    ========================================================= */
 
 function initHeader() {
-
     const statusEl =
-        document.getElementById(
-            "user-status"
-        );
+        document.getElementById("user-status");
 
     const authLinksEl =
-        document.getElementById(
-            "auth-links"
-        );
+        document.getElementById("auth-links");
 
     const navEl =
-        document.getElementById(
-            "site-nav"
-        );
+        document.getElementById("site-nav");
 
-
-    if (
-        !statusEl ||
-        !authLinksEl
-    ) {
+    if (!statusEl || !authLinksEl) {
         return;
     }
 
-
     /* Actualizar contador inicial */
-
     updateCartCount();
 
-
-    /* Escuchar cambios del carrito */
-
+    /*
+     * Escuchar cambios del carrito.
+     *
+     * Este evento se dispara cuando se agrega,
+     * elimina o modifica un producto del carrito.
+     */
     window.addEventListener(
         "cart-updated",
         updateCartCount
     );
 
-
+    /*
+     * Mantener compatibilidad con cambios de
+     * localStorage producidos por otras partes
+     * de la aplicación.
+     */
     window.addEventListener(
         "storage",
         updateCartCount
@@ -125,11 +137,8 @@ function initHeader() {
        ===================================================== */
 
     if (isLoggedIn()) {
-
         statusEl.textContent =
-            `Usuario: ${getUserName() || "Cliente"
-            }`;
-
+            `Usuario: ${getUserName() || "Cliente"}`;
 
         authLinksEl.innerHTML = `
             <a
@@ -141,24 +150,19 @@ function initHeader() {
             </a>
         `;
 
-
         const logoutLink =
-            document.getElementById(
-                "logout-link"
-            );
-
+            document.getElementById("logout-link");
 
         logoutLink.addEventListener(
             "click",
             (event) => {
-
                 event.preventDefault();
 
                 clearSession();
 
                 /*
-                 * Eliminar inmediatamente
-                 * el carrito visual.
+                 * Eliminar inmediatamente el carrito
+                 * visual del encabezado.
                  */
                 updateCartCount();
 
@@ -172,23 +176,15 @@ function initHeader() {
            ADMINISTRADOR
            ================================================= */
 
-        if (
-            isAdmin() &&
-            navEl
-        ) {
-
+        if (isAdmin() && navEl) {
             const existingAdminLink =
                 navEl.querySelector(
                     'a[href="admin-panel.html"]'
                 );
 
-
             if (!existingAdminLink) {
-
                 const adminLink =
-                    document.createElement(
-                        "a"
-                    );
+                    document.createElement("a");
 
                 adminLink.href =
                     "admin-panel.html";
@@ -196,9 +192,7 @@ function initHeader() {
                 adminLink.textContent =
                     "Panel admin";
 
-                navEl.appendChild(
-                    adminLink
-                );
+                navEl.appendChild(adminLink);
             }
         }
 
@@ -211,7 +205,6 @@ function initHeader() {
         statusEl.textContent =
             "Usuario: Invitado";
 
-
         authLinksEl.innerHTML = `
             <a
                 href="login.html"
@@ -220,7 +213,6 @@ function initHeader() {
                 Iniciar sesión
             </a>
         `;
-
 
         /*
          * Asegurarnos nuevamente de que
@@ -236,51 +228,34 @@ function initHeader() {
    ========================================================= */
 
 function initHeaderSearch() {
-
     const headerSearch =
-        document.getElementById(
-            "header-search"
-        );
-
+        document.getElementById("header-search");
 
     if (!headerSearch) {
         return;
     }
 
-
     headerSearch.addEventListener(
         "keydown",
         (event) => {
-
-            if (
-                event.key !== "Enter"
-            ) {
+            if (event.key !== "Enter") {
                 return;
             }
 
-
             event.preventDefault();
-
 
             const query =
                 headerSearch.value.trim();
 
-
             const params =
                 new URLSearchParams();
 
-
             if (query) {
-                params.set(
-                    "search",
-                    query
-                );
+                params.set("search", query);
             }
-
 
             const queryString =
                 params.toString();
-
 
             window.location.href =
                 queryString
@@ -298,9 +273,7 @@ function initHeaderSearch() {
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-
         initHeader();
-
         initHeaderSearch();
     }
 );

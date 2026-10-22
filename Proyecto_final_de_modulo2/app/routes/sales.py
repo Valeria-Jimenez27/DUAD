@@ -265,25 +265,48 @@ def get_invoice(order_id):
 @admin_required
 def get_orders():
     cached = cache_manager.get_data(ORDERS_ALL_KEY)
+
     if cached:
         return jsonify(cached), 200
 
     db = SessionLocal()
+
     try:
         orders = db.query(Order).all()
-        result = [
-            {
-                "order_id": o.order_id,
-                "customer_id": o.customer_id,
-                "order_date": str(o.order_date),
-                "total_amount": o.total_amount,
-                "status": o.status
-            } for o in orders
-        ]
-        cache_manager.store_data(ORDERS_ALL_KEY, result, time_to_live=120)
+
+        result = []
+
+        for order in orders:
+            customer = db.query(Customer).filter(
+                Customer.customer_id == order.customer_id
+            ).first()
+
+            customer_name = (
+                f"{customer.first_name} {customer.last_name}"
+                if customer
+                else f"Cliente #{order.customer_id}"
+            )
+
+            result.append({
+                "order_id": order.order_id,
+                "customer_id": order.customer_id,
+                "customer_name": customer_name,
+                "order_date": str(order.order_date),
+                "total_amount": order.total_amount,
+                "status": order.status
+            })
+
+        cache_manager.store_data(
+            ORDERS_ALL_KEY,
+            result,
+            time_to_live=120
+        )
+
         return jsonify(result), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     finally:
         db.close()
 

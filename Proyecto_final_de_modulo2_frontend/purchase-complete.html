@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Compra finalizada | Vale's Pet Store</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
         href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
         rel="stylesheet" />
+
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -20,18 +23,20 @@
         <a href="index.html" class="brand">
             <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
         </a>
+
         <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
             <a href="index.html">Inicio</a>
             <a href="catalog.html">Catálogo</a>
             <a href="index.html#footer-contact">Contacto</a>
         </nav>
-        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+
+        <div class="header-actions">
             <span class="user-status" id="user-status">Usuario: Invitado</span>
             <div class="auth-links" id="auth-links"></div>
         </div>
     </header>
 
-    <main class="section container" style="max-width: 48rem;">
+    <main class="section container invoice-page">
         <div id="access-restricted" hidden></div>
 
         <div id="page-content">
@@ -42,18 +47,22 @@
             </div>
 
             <div id="invoice-content" hidden>
-                <div class="summary-card flex-center" style="margin-bottom: var(--space-lg);">
+                <div class="summary-card invoice-success">
                     <div class="success-icon-circle" aria-hidden="true">✓</div>
+
                     <h1>Compra realizada con éxito</h1>
+
                     <p class="text-muted">
-                        Pedido <strong id="order-id"></strong> · <span id="order-date"></span>. Aquí tienes el detalle
-                        de tu compra.
+                        Pedido <strong id="order-id"></strong> ·
+                        <span id="order-date"></span>.
+                        Aquí tienes el detalle de tu compra.
                     </p>
                 </div>
 
                 <div class="summary-card">
-                    <h2 style="margin-bottom: var(--space-md);">Resumen de la compra</h2>
-                    <div style="overflow-x: auto;">
+                    <h2 class="invoice-section__title">Resumen de la compra</h2>
+
+                    <div class="invoice-table-wrapper">
                         <table class="admin-table">
                             <thead>
                                 <tr>
@@ -72,17 +81,26 @@
                         <span id="invoice-total">$0.00</span>
                     </div>
 
-                    <hr
-                        style="border: none; border-top: 0.06rem solid var(--color-bg-alt); margin-block: var(--space-md);" />
+                    <hr class="invoice-divider" />
 
-                    <p><strong>Dirección de entrega:</strong> <span id="invoice-address"></span></p>
-                    <p><strong>Método de pago:</strong> <span id="invoice-payment"></span></p>
+                    <p>
+                        <strong>Dirección de entrega:</strong>
+                        <span id="invoice-address"></span>
+                    </p>
+
+                    <p>
+                        <strong>Método de pago:</strong>
+                        <span id="invoice-payment"></span>
+                    </p>
                 </div>
 
-                <div class="flex-center"
-                    style="flex-direction: row; gap: var(--space-md); margin-top: var(--space-lg);">
-                    <a href="catalog.html" class="btn btn--primary">Volver al catálogo</a>
-                    <a href="index.html" class="btn btn--outline">Ir al inicio</a>
+                <div class="invoice-actions">
+                    <a href="catalog.html" class="btn btn--primary">
+                        Volver al catálogo
+                    </a>
+                    <a href="index.html" class="btn btn--outline">
+                        Ir al inicio
+                    </a>
                 </div>
             </div>
         </div>

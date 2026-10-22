@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Crear cuenta | Vale's Pet Store</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
         href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
         rel="stylesheet" />
+
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -20,24 +23,26 @@
         <a href="index.html" class="brand">
             <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
         </a>
+
         <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
             <a href="index.html">Inicio</a>
             <a href="catalog.html">Catálogo</a>
             <a href="index.html#footer-contact">Contacto</a>
         </nav>
-        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
+
+        <div class="header-actions">
             <span class="user-status" id="user-status">Usuario: Invitado</span>
             <div class="auth-links" id="auth-links"></div>
         </div>
     </header>
 
-    <main class="section container">
-        <form class="form-card" id="register-form" novalidate style="width: min(100%, 32rem);">
-            <h1 style="font-size: var(--fs-xl); margin-bottom: var(--space-lg);">Crear cuenta</h1>
+    <main class="section container register-page">
+        <form class="form-card register-form" id="register-form" novalidate>
+            <h1 class="register-page__title">Crear cuenta</h1>
 
             <div id="form-alert" class="alert alert--error" hidden></div>
 
-            <div class="two-col" style="gap: var(--space-md);">
+            <div class="two-col register-form__name-fields">
                 <div class="field">
                     <label for="first-name">Nombre</label>
                     <input type="text" id="first-name" name="firstName" required />
@@ -82,9 +87,11 @@
                 <span class="field-error" id="address-error"></span>
             </div>
 
-            <button type="submit" class="btn btn--primary btn--full" id="submit-btn">Crear cuenta</button>
+            <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
+                Crear cuenta
+            </button>
 
-            <p class="text-muted" style="margin-top: var(--space-md); text-align: center;">
+            <p class="text-muted register-form__login-link">
                 ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
             </p>
         </form>

@@ -1,14 +1,18 @@
 import { getProducts } from "./productService.js";
 import { addItemToCart } from "./orderService.js";
+
 import {
     isLoggedIn,
     getCustomerId
 } from "./storage.js";
+
 import {
     showAlert,
     setLoading,
-    renderAccessRestricted
+    renderAccessRestricted,
+    escapeHtml
 } from "./ui.js";
+
 import { getProductImage } from "./productImage.js";
 
 
@@ -81,7 +85,6 @@ if (searchInput && initialSearch) {
    ========================================================= */
 
 if (!isLoggedIn()) {
-
     pageContentEl.hidden = true;
 
     renderAccessRestricted(
@@ -108,7 +111,6 @@ if (!isLoggedIn()) {
    ========================================================= */
 
 function normalizeText(value) {
-
     return String(value || "")
         .trim()
         .toLowerCase()
@@ -133,17 +135,48 @@ function renderProducts(products) {
                 const inStock =
                     Number(product.quantity) > 0;
 
+                const productId =
+                    Number(product.product_id);
+
+                const productName =
+                    product.name ||
+                    "Producto sin nombre";
+
+                const productBrand =
+                    product.brand ||
+                    "Sin marca";
+
+                const productCategory =
+                    product.category ||
+                    "General";
+
+                const productImage =
+                    getProductImage(product);
+
+                const stockText =
+                    inStock
+                        ? `${Number(product.quantity)} en stock`
+                        : "Agotado";
+
+                const buttonText =
+                    inStock
+                        ? "Agregar al carrito"
+                        : "Sin stock";
+
+
                 return `
                     <div class="product-card">
 
                         <a
-                            href="product.html?id=${product.product_id}"
+                            href="product.html?id=${encodeURIComponent(
+                    productId
+                )}"
                             class="product-card__link"
                         >
 
                             <img
-                                src="${getProductImage(product)}"
-                                alt="${product.name}"
+                                src="${escapeHtml(productImage)}"
+                                alt="${escapeHtml(productName)}"
                                 class="product-card__image"
                             />
 
@@ -155,20 +188,17 @@ function renderProducts(products) {
                         : "badge--out"
                     }"
                                 >
-                                    ${inStock
-                        ? `${product.quantity} en stock`
-                        : "Agotado"
-                    }
+                                    ${escapeHtml(stockText)}
                                 </span>
 
                                 <h3>
-                                    ${product.name}
+                                    ${escapeHtml(productName)}
                                 </h3>
 
                                 <span class="text-muted">
-                                    ${product.brand || "Sin marca"}
+                                    ${escapeHtml(productBrand)}
                                     ·
-                                    ${product.category || "General"}
+                                    ${escapeHtml(productCategory)}
                                 </span>
 
                                 <span class="product-card__price">
@@ -182,13 +212,10 @@ function renderProducts(products) {
                         <button
                             type="button"
                             class="btn btn--primary btn--full product-card__quick-add"
-                            data-product-id="${product.product_id}"
+                            data-product-id="${escapeHtml(productId)}"
                             ${inStock ? "" : "disabled"}
                         >
-                            ${inStock
-                        ? "Agregar al carrito"
-                        : "Sin stock"
-                    }
+                            ${escapeHtml(buttonText)}
                         </button>
 
                     </div>
@@ -269,13 +296,11 @@ function applyFilters() {
     if (filtered.length === 0) {
 
         gridEl.hidden = true;
-
         noResultsStateEl.hidden = false;
 
     } else {
 
         noResultsStateEl.hidden = true;
-
         renderProducts(filtered);
     }
 }
@@ -314,9 +339,7 @@ async function loadCatalog() {
             !products ||
             products.length === 0
         ) {
-
             emptyStateEl.hidden = false;
-
             return;
         }
 
@@ -353,6 +376,7 @@ gridEl.addEventListener(
                 ".product-card__quick-add"
             );
 
+
         if (
             !button ||
             button.disabled
@@ -378,6 +402,7 @@ gridEl.addEventListener(
                 button.dataset.productId
             );
 
+
         const restoreButton =
             setLoading(
                 button,
@@ -391,6 +416,7 @@ gridEl.addEventListener(
                 productId,
                 1
             );
+
 
             button.textContent =
                 "✓ Agregado";

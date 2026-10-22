@@ -1,5 +1,5 @@
 :root {
-    /* Color — paleta pastel */
+    /* Colores — paleta pastel */
     --color-lilac: #c7b8ea;
     --color-lilac-dark: #9c87d1;
     --color-pink: #fbc7da;
@@ -30,6 +30,7 @@
     --fs-xl: 2rem;
     --fs-2xl: 2.75rem;
 
+    /* Espaciado */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
     --space-md: 1rem;

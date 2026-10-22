@@ -39,7 +39,7 @@ export function validateField(value, rule) {
                 ? null
                 : "La contraseña debe tener mínimo 8 caracteres, con al menos una letra y un número.";
         case "name":
-            return isValidName(value) ? null : "Ingresa solo letras, mínimo 2 caracteres.";
+            return isValidName(value) ? null : "Ingresa un nombre de 2 a 50 caracteres, usando solo letras y espacios.";
         case "phone":
             return isValidPhone(value) ? null : "Ingresa un teléfono válido (8 a 15 dígitos).";
         case "required":

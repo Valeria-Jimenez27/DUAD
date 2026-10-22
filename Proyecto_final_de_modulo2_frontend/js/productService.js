@@ -1,17 +1,17 @@
+
 import { apiFetch, USE_MOCK_DATA } from "./config.js";
 
 import {
     mockGetProducts,
     mockGetProductById,
     mockGetBrands,
-    mockGetCategories
+    mockGetCategories,
 } from "./mockData.js";
 
 /**
  * Trae el catálogo completo.
  *
- * Cuando USE_MOCK_DATA es true, utiliza los productos
- * guardados en mockData.js / localStorage.
+ * Si USE_MOCK_DATA es true, utiliza los datos de prueba.
  *
  * @returns {Promise<Array>}
  */
@@ -20,9 +20,7 @@ export async function getProducts() {
         return mockGetProducts();
     }
 
-    return apiFetch("/products", {
-        method: "GET"
-    });
+    return apiFetch("/products");
 }
 
 /**
@@ -32,17 +30,19 @@ export async function getProducts() {
  * @returns {Promise<Object|null>}
  */
 export async function getProductById(id) {
+    if (id === null || id === undefined || String(id).trim() === "") {
+        throw new Error("Debes proporcionar el ID de un producto.");
+    }
+
     if (USE_MOCK_DATA) {
         return mockGetProductById(id);
     }
 
-    return apiFetch(`/products/${id}`, {
-        method: "GET"
-    });
+    return apiFetch(`/products/${encodeURIComponent(id)}`);
 }
 
 /**
- * Trae las marcas.
+ * Trae las marcas disponibles.
  *
  * @returns {Promise<Array>}
  */
@@ -52,13 +52,12 @@ export async function getBrands() {
     }
 
     return apiFetch("/brands", {
-        method: "GET",
-        requiresAuth: false
+        requiresAuth: false,
     });
 }
 
 /**
- * Trae las categorías.
+ * Trae las categorías disponibles.
  *
  * @returns {Promise<Array>}
  */
@@ -68,7 +67,6 @@ export async function getCategories() {
     }
 
     return apiFetch("/categories", {
-        method: "GET",
-        requiresAuth: false
+        requiresAuth: false,
     });
 }

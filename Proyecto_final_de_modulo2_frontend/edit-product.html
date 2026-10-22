@@ -8,7 +8,6 @@
     <title>Editar producto | Vale's Pet Store</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-
     <link
         href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
         rel="stylesheet" />
@@ -20,191 +19,98 @@
 </head>
 
 <body>
-
     <header class="site-header container">
-
         <a href="index.html" class="brand">
             <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
         </a>
 
         <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
-            <a href="admin-panel.html">
-                Panel admin
-            </a>
-
-            <a href="catalog.html">
-                Catálogo
-            </a>
-
-            <a href="index.html#footer-contact">
-                Contacto
-            </a>
+            <a href="admin-panel.html">Panel admin</a>
+            <a href="catalog.html">Catálogo</a>
+            <a href="index.html#footer-contact">Contacto</a>
         </nav>
 
         <div class="flex-center edit-product-header-actions">
-
             <span class="user-status" id="user-status">
                 Usuario: Invitado
             </span>
-
             <div class="auth-links" id="auth-links"></div>
-
         </div>
-
     </header>
 
-
     <main class="section container">
-
         <a href="admin-panel.html" class="text-muted edit-product-back">
             ← Volver al panel
         </a>
 
-
         <div id="access-restricted" hidden></div>
 
-
         <section id="page-content" class="edit-product-section" aria-labelledby="form-title">
-
             <form class="form-card edit-product-form" id="product-form" novalidate>
-
                 <h1 id="form-title" class="edit-product-title">
                     Nuevo producto
                 </h1>
 
-
                 <div id="form-alert" class="alert alert--error" hidden></div>
 
-
-                <!-- NOMBRE -->
-
                 <div class="field">
-
-                    <label for="name">
-                        Nombre del producto
-                    </label>
-
+                    <label for="name">Nombre del producto</label>
                     <input type="text" id="name" name="name" autocomplete="off" required />
-
                     <span class="field-error" id="name-error" aria-live="polite"></span>
-
                 </div>
 
-
-                <!-- PRECIO -->
-
                 <div class="field">
-
-                    <label for="price">
-                        Precio
-                    </label>
-
+                    <label for="price">Precio</label>
                     <input type="number" id="price" name="price" min="0.01" step="0.01" inputmode="decimal" required />
-
                     <span class="field-error" id="price-error" aria-live="polite"></span>
-
                 </div>
 
-
-                <!-- STOCK -->
-
                 <div class="field">
-
-                    <label for="quantity">
-                        Stock disponible
-                    </label>
-
+                    <label for="quantity">Stock disponible</label>
                     <input type="number" id="quantity" name="quantity" min="0" step="1" inputmode="numeric" required />
-
                     <span class="field-error" id="quantity-error" aria-live="polite"></span>
-
                 </div>
 
-
-                <!-- MARCA -->
-
                 <div class="field">
-
-                    <label for="brand">
-                        Marca
-                    </label>
-
+                    <label for="brand">Marca</label>
                     <select id="brand" name="brand" required>
-                        <option value="">
-                            Selecciona una marca
-                        </option>
+                        <option value="">Selecciona una marca</option>
                     </select>
-
                     <span class="field-error" id="brand-error" aria-live="polite"></span>
-
                 </div>
 
-
-                <!-- CATEGORÍA -->
-
                 <div class="field">
-
-                    <label for="category">
-                        Categoría
-                    </label>
-
+                    <label for="category">Categoría</label>
                     <select id="category" name="category" required>
-                        <option value="">
-                            Selecciona una categoría
-                        </option>
+                        <option value="">Selecciona una categoría</option>
                     </select>
-
                     <span class="field-error" id="category-error" aria-live="polite"></span>
-
                 </div>
 
-
-                <!-- FOTO -->
-
                 <div class="field">
-
-                    <label for="image">
-                        Foto del producto
-                    </label>
-
+                    <label for="image">Foto del producto</label>
                     <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp" />
-
                     <span class="form-help">
                         JPG, PNG o WebP. Tamaño máximo: 1.5 MB.
                     </span>
-
                     <span class="field-error" id="image-error" aria-live="polite"></span>
 
-
                     <div id="image-preview-container" class="product-image-preview" hidden>
-
-                        <p class="product-image-preview__title">
-                            Vista previa
-                        </p>
-
+                        <p class="product-image-preview__title">Vista previa</p>
                         <img id="image-preview" src="" alt="Vista previa del producto"
                             class="product-image-preview__image" />
-
                     </div>
-
                 </div>
-
 
                 <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
                     Crear producto
                 </button>
-
             </form>
-
         </section>
-
     </main>
 
-
     <script type="module" src="js/header.js"></script>
-
     <script type="module" src="js/editProduct.js"></script>
-
 </body>
 
 </html>

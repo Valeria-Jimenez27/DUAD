@@ -1,13 +1,20 @@
+
 import { getProductById } from "./productService.js";
 import { addItemToCart } from "./orderService.js";
 import { isLoggedIn, getCustomerId } from "./storage.js";
-import { showAlert, setLoading, renderAccessRestricted } from "./ui.js";
+import {
+    showAlert,
+    setLoading,
+    renderAccessRestricted
+} from "./ui.js";
 import { getProductImage } from "./productImage.js";
 
 const loadingEl = document.getElementById("product-loading");
 const detailEl = document.getElementById("product-detail");
 const apiErrorEl = document.getElementById("api-error");
 const addToCartAlertEl = document.getElementById("add-to-cart-alert");
+const pageContentEl = document.getElementById("page-content");
+const accessRestrictedEl = document.getElementById("access-restricted");
 
 const imageEl = document.getElementById("product-image");
 const nameEl = document.getElementById("product-name");
@@ -17,13 +24,18 @@ const stockBadgeEl = document.getElementById("product-stock-badge");
 const quantityInput = document.getElementById("quantity");
 const addToCartBtn = document.getElementById("add-to-cart-btn");
 
-if (!isLoggedIn()) {
-    document.getElementById("page-content").hidden = true;
-    renderAccessRestricted(document.getElementById("access-restricted"), {
+const loggedIn = isLoggedIn();
+
+if (!loggedIn) {
+    if (pageContentEl) {
+        pageContentEl.hidden = true;
+    }
+
+    renderAccessRestricted(accessRestrictedEl, {
         title: "Debes iniciar sesión para continuar",
         message: "Inicia sesión para ver el detalle de este producto y comprarlo.",
         buttonText: "Ir a iniciar sesión",
-        buttonHref: "login.html",
+        buttonHref: "login.html"
     });
 }
 
@@ -33,29 +45,62 @@ const productId = params.get("id");
 let currentProduct = null;
 
 function renderProduct(product) {
-    currentProduct = product;
-    const inStock = product.quantity > 0;
-    imageEl.src = getProductImage(product);
-    imageEl.alt = product.name;
-    nameEl.textContent = product.name;
-    metaEl.textContent = `${product.brand || "Sin marca"} · ${product.category || "General"}`;
-    priceEl.textContent = `$${Number(product.price).toFixed(2)}`;
+    if (!product || typeof product !== "object") {
+        throw new Error("No se encontraron los datos del producto.");
+    }
 
-    stockBadgeEl.textContent = inStock ? `${product.quantity} en stock` : "Agotado";
-    stockBadgeEl.className = `badge ${inStock ? "badge--stock" : "badge--out"}`;
+    const productName = product.name ?? "Producto sin nombre";
+    const quantity = Number(product.quantity);
+    const price = Number(product.price);
 
-    quantityInput.max = product.quantity;
+    if (!Number.isFinite(quantity) || !Number.isFinite(price)) {
+        throw new Error("Los datos de precio o inventario del producto no son válidos.");
+    }
+
+    currentProduct = {
+        ...product,
+        name: productName,
+        quantity,
+        price
+    };
+
+    const inStock = quantity > 0;
+
+    imageEl.src = getProductImage(currentProduct);
+    imageEl.alt = productName;
+
+    nameEl.textContent = productName;
+    metaEl.textContent =
+        `${product.brand || "Sin marca"} · ${product.category || "General"}`;
+
+    priceEl.textContent = `$${price.toFixed(2)}`;
+
+    stockBadgeEl.textContent = inStock
+        ? `${quantity} en stock`
+        : "Agotado";
+
+    stockBadgeEl.className = `badge ${
+        inStock ? "badge--stock" : "badge--out"
+    }`;
+
+    quantityInput.min = "1";
+    quantityInput.max = String(Math.max(0, quantity));
+    quantityInput.value = "1";
+    quantityInput.disabled = !inStock;
+
     addToCartBtn.disabled = !inStock;
-    if (!inStock) addToCartBtn.textContent = "Sin stock disponible";
+    addToCartBtn.textContent = inStock
+        ? "Agregar al carrito"
+        : "Sin stock disponible";
 
     loadingEl.hidden = true;
     detailEl.hidden = false;
 }
 
 async function loadProduct() {
-    if (!productId) {
-        showAlert(apiErrorEl, "No se especificó ningún producto.", "error");
+    if (!productId || !Number.isInteger(Number(productId)) || Number(productId) <= 0) {
         loadingEl.hidden = true;
+        showAlert(apiErrorEl, "El identificador del producto no es válido.", "error");
         return;
     }
 
@@ -64,44 +109,71 @@ async function loadProduct() {
         renderProduct(product);
     } catch (error) {
         loadingEl.hidden = true;
-        showAlert(apiErrorEl, error.message, "error");
+        showAlert(
+            apiErrorEl,
+            error?.message || "No se pudo cargar el producto.",
+            "error"
+        );
     }
 }
 
-addToCartBtn.addEventListener("click", async () => {
-    if (!getCustomerId()) {
-        showAlert(
-            addToCartAlertEl,
-            "Tu cuenta no tiene un perfil de cliente asociado. Contacta al administrador.",
-            "error"
-        );
-        return;
-    }
+if (addToCartBtn) {
+    addToCartBtn.addEventListener("click", async () => {
+        if (!currentProduct) {
+            showAlert(
+                addToCartAlertEl,
+                "Espera a que cargue la información del producto.",
+                "error"
+            );
+            return;
+        }
 
-    const quantity = Number(quantityInput.value);
+        if (!getCustomerId()) {
+            showAlert(
+                addToCartAlertEl,
+                "Tu cuenta no tiene un perfil de cliente asociado. Contacta al administrador.",
+                "error"
+            );
+            return;
+        }
 
-    if (!quantity || quantity < 1) {
-        showAlert(addToCartAlertEl, "Ingresa una cantidad válida.", "error");
-        return;
-    }
+        const quantity = Number(quantityInput.value);
 
-    if (quantity > currentProduct.quantity) {
-        showAlert(addToCartAlertEl, `Solo hay ${currentProduct.quantity} unidades disponibles.`, "error");
-        return;
-    }
+        if (!Number.isInteger(quantity) || quantity < 1) {
+            showAlert(
+                addToCartAlertEl,
+                "Ingresa una cantidad entera mayor que cero.",
+                "error"
+            );
+            return;
+        }
 
-    const restoreButton = setLoading(addToCartBtn, "Agregando...");
+        if (quantity > currentProduct.quantity) {
+            showAlert(
+                addToCartAlertEl,
+                `Solo hay ${currentProduct.quantity} unidades disponibles.`,
+                "error"
+            );
+            return;
+        }
 
-    try {
-        await addItemToCart(Number(productId), quantity);
-        window.location.href = "cart.html";
-    } catch (error) {
-        showAlert(addToCartAlertEl, error.message, "error");
-    } finally {
-        restoreButton();
-    }
-});
+        const restoreButton = setLoading(addToCartBtn, "Agregando...");
 
-if (isLoggedIn()) {
+        try {
+            await addItemToCart(Number(productId), quantity);
+            window.location.href = "cart.html";
+        } catch (error) {
+            showAlert(
+                addToCartAlertEl,
+                error?.message || "No se pudo agregar el producto al carrito.",
+                "error"
+            );
+        } finally {
+            restoreButton();
+        }
+    });
+}
+
+if (loggedIn) {
     loadProduct();
 }

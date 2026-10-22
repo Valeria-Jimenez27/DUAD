@@ -1,10 +1,19 @@
+
 import { login } from "./authService.js";
 import { isLoggedIn, isAdmin } from "./storage.js";
 import { validateField } from "./validators.js";
-import { showAlert, clearAlert, setFieldError, setLoading } from "./ui.js";
+import {
+    showAlert,
+    clearAlert,
+    setFieldError,
+    setLoading
+} from "./ui.js";
 
+// Si ya hay una sesión activa, redirige según el rol.
 if (isLoggedIn()) {
-    window.location.href = isAdmin() ? "admin-panel.html" : "catalog.html";
+    window.location.href = isAdmin()
+        ? "admin-panel.html"
+        : "catalog.html";
 }
 
 const form = document.getElementById("login-form");
@@ -15,32 +24,63 @@ const passwordError = document.getElementById("password-error");
 const formAlert = document.getElementById("form-alert");
 const submitBtn = document.getElementById("submit-btn");
 
-form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    clearAlert(formAlert);
+if (!form) {
+    console.error('No se encontró el formulario con ID "login-form".');
+} else {
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearAlert(formAlert);
 
-    const emailMsg = validateField(emailInput.value, "email");
-    const passwordMsg = validateField(passwordInput.value, "required");
+        const emailMsg = validateField(
+            emailInput.value.trim(),
+            "email"
+        );
 
-    setFieldError(emailInput, emailError, emailMsg);
-    setFieldError(passwordInput, passwordError, passwordMsg);
+        const passwordMsg = validateField(
+            passwordInput.value,
+            "required"
+        );
 
-    if (emailMsg || passwordMsg) return;
+        setFieldError(emailInput, emailError, emailMsg);
+        setFieldError(passwordInput, passwordError, passwordMsg);
 
-    const restoreButton = setLoading(submitBtn, "Ingresando...");
+        if (emailMsg || passwordMsg) {
+            showAlert(
+                formAlert,
+                "Por favor, revisa los campos e inténtalo de nuevo.",
+                "error",
+                "alert--plain"
+            );
+            return;
+        }
 
-    try {
-        const result = await login({
-            email: emailInput.value.trim(),
-            password: passwordInput.value,
-        });
+        const restoreButton = setLoading(
+            submitBtn,
+            "Ingresando..."
+        );
 
-        window.location.href = result.role === "admin" ? "admin-panel.html" : "catalog.html";
-    } catch (error) {
-        // error.message ya viene traducido desde apiFetch (config.js), nunca
-        // dejamos que un error de la API se quede solo en consola.
-        showAlert(formAlert, error.message, "error", "alert--plain");
-    } finally {
-        restoreButton();
-    }
-});
+        try {
+            const result = await login({
+                email: emailInput.value.trim(),
+                password: passwordInput.value
+            });
+
+            const role = result?.role;
+
+            window.location.href =
+                role === "admin" || isAdmin()
+                    ? "admin-panel.html"
+                    : "catalog.html";
+        } catch (error) {
+            showAlert(
+                formAlert,
+                error?.message ||
+                    "No se pudo iniciar sesión. Verifica tus credenciales e inténtalo de nuevo.",
+                "error",
+                "alert--plain"
+            );
+        } finally {
+            restoreButton();
+        }
+    });
+}

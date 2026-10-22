@@ -1,107 +1,358 @@
-import { getCart, checkout } from "./orderService.js";
-import { getCartId, isLoggedIn, clearCartId } from "./storage.js";
-import { validateField } from "./validators.js";
-import { showAlert, clearAlert, setFieldError, setLoading, renderAccessRestricted } from "./ui.js";
+import {
+    getCart,
+    checkout
+} from "./orderService.js";
 
-const loadingEl = document.getElementById("summary-loading");
-const contentEl = document.getElementById("summary-content");
-const itemsEl = document.getElementById("summary-items");
-const totalEl = document.getElementById("summary-total");
-const apiErrorEl = document.getElementById("api-error");
+import {
+    getCartId,
+    isLoggedIn,
+    clearCartId
+} from "./storage.js";
 
-const form = document.getElementById("checkout-form");
-const addressInput = document.getElementById("billing-address");
-const paymentSelect = document.getElementById("payment-method");
-const addressError = document.getElementById("billing-address-error");
-const paymentError = document.getElementById("payment-method-error");
-const formAlert = document.getElementById("form-alert");
-const submitBtn = document.getElementById("submit-btn");
+import {
+    validateField
+} from "./validators.js";
 
-const pageContentEl = document.getElementById("page-content");
-const accessRestrictedEl = document.getElementById("access-restricted");
+import {
+    showAlert,
+    clearAlert,
+    setFieldError,
+    setLoading,
+    renderAccessRestricted,
+    escapeHtml
+} from "./ui.js";
+
+
+const loadingEl =
+    document.getElementById(
+        "summary-loading"
+    );
+
+const contentEl =
+    document.getElementById(
+        "summary-content"
+    );
+
+const itemsEl =
+    document.getElementById(
+        "summary-items"
+    );
+
+const totalEl =
+    document.getElementById(
+        "summary-total"
+    );
+
+const apiErrorEl =
+    document.getElementById(
+        "api-error"
+    );
+
+
+const form =
+    document.getElementById(
+        "checkout-form"
+    );
+
+const addressInput =
+    document.getElementById(
+        "billing-address"
+    );
+
+const paymentSelect =
+    document.getElementById(
+        "payment-method"
+    );
+
+const addressError =
+    document.getElementById(
+        "billing-address-error"
+    );
+
+const paymentError =
+    document.getElementById(
+        "payment-method-error"
+    );
+
+const formAlert =
+    document.getElementById(
+        "form-alert"
+    );
+
+const submitBtn =
+    document.getElementById(
+        "submit-btn"
+    );
+
+
+const pageContentEl =
+    document.getElementById(
+        "page-content"
+    );
+
+const accessRestrictedEl =
+    document.getElementById(
+        "access-restricted"
+    );
+
+
+/* =========================================================
+   ACCESO
+   ========================================================= */
 
 if (!isLoggedIn()) {
+
     pageContentEl.hidden = true;
-    renderAccessRestricted(accessRestrictedEl, {
-        title: "Debes iniciar sesión para continuar",
-        message: "Inicia sesión para revisar y confirmar tu pedido.",
-        buttonText: "Ir a iniciar sesión",
-        buttonHref: "login.html",
-    });
+
+    renderAccessRestricted(
+        accessRestrictedEl,
+        {
+            title:
+                "Debes iniciar sesión para continuar",
+
+            message:
+                "Inicia sesión para revisar y confirmar tu pedido.",
+
+            buttonText:
+                "Ir a iniciar sesión",
+
+            buttonHref:
+                "login.html"
+        }
+    );
 }
 
-const cartId = getCartId();
 
-if (isLoggedIn() && !cartId) {
-    window.location.href = "cart.html";
+const cartId =
+    getCartId();
+
+
+if (
+    isLoggedIn() &&
+    !cartId
+) {
+    window.location.href =
+        "cart.html";
 }
+
+
+/* =========================================================
+   RESUMEN DEL PEDIDO
+   ========================================================= */
 
 function renderSummary(cart) {
-    if (!cart.items || cart.items.length === 0) {
-        window.location.href = "cart.html";
+
+    if (
+        !cart.items ||
+        cart.items.length === 0
+    ) {
+        window.location.href =
+            "cart.html";
+
         return;
     }
 
-    itemsEl.innerHTML = cart.items
-        .map(
-            (item) => `
-        <div class="cart-item">
-          <div class="cart-item__info">
-            <h3>${item.product_name}</h3>
-            <span class="text-muted">${item.quantity} × $${Number(item.unit_price).toFixed(2)}</span>
-          </div>
-          <span class="product-card__price">$${Number(item.subtotal).toFixed(2)}</span>
-        </div>
-      `
-        )
-        .join("");
 
-    totalEl.textContent = `$${Number(cart.total || 0).toFixed(2)}`;
+    itemsEl.innerHTML =
+        cart.items
+            .map(
+                (item) => {
+
+                    const productName =
+                        item.product_name ||
+                        "Producto";
+
+
+                    const quantity =
+                        Number(
+                            item.quantity || 0
+                        );
+
+
+                    const unitPrice =
+                        Number(
+                            item.unit_price || 0
+                        );
+
+
+                    const subtotal =
+                        Number(
+                            item.subtotal || 0
+                        );
+
+
+                    return `
+                        <div class="cart-item">
+
+                            <div class="cart-item__info">
+
+                                <h3>
+                                    ${escapeHtml(
+                        productName
+                    )}
+                                </h3>
+
+                                <span class="text-muted">
+                                    ${escapeHtml(
+                        quantity
+                    )}
+                                    ×
+                                    $${unitPrice.toFixed(2)}
+                                </span>
+
+                            </div>
+
+                            <span class="product-card__price">
+                                $${subtotal.toFixed(2)}
+                            </span>
+
+                        </div>
+                    `;
+                }
+            )
+            .join("");
+
+
+    totalEl.textContent =
+        `$${Number(
+            cart.total || 0
+        ).toFixed(2)}`;
+
 
     loadingEl.hidden = true;
+
     contentEl.hidden = false;
 }
 
+
+/* =========================================================
+   CARGAR RESUMEN
+   ========================================================= */
+
 async function loadSummary() {
+
     try {
-        const cart = await getCart(cartId);
+
+        const cart =
+            await getCart(cartId);
+
         renderSummary(cart);
+
     } catch (error) {
+
         loadingEl.hidden = true;
-        showAlert(apiErrorEl, error.message, "error");
+
+        showAlert(
+            apiErrorEl,
+            error.message,
+            "error"
+        );
     }
 }
 
-form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    clearAlert(formAlert);
 
-    const addressMsg = validateField(addressInput.value, "required");
-    const paymentMsg = validateField(paymentSelect.value, "required");
+/* =========================================================
+   CONFIRMAR PEDIDO
+   ========================================================= */
 
-    setFieldError(addressInput, addressError, addressMsg);
-    setFieldError(paymentSelect, paymentError, paymentMsg);
+form.addEventListener(
+    "submit",
+    async (event) => {
 
-    if (addressMsg || paymentMsg) return;
+        event.preventDefault();
 
-    const restoreButton = setLoading(submitBtn, "Procesando...");
+        clearAlert(formAlert);
 
-    try {
-        const result = await checkout(cartId, {
-            billingAddress: addressInput.value.trim(),
-            paymentMethod: paymentSelect.value,
-        });
 
-        clearCartId();
+        const addressMsg =
+            validateField(
+                addressInput.value,
+                "required"
+            );
 
-        window.location.href = `purchase-complete.html?order_id=${result.order_id}`;
-    } catch (error) {
-        showAlert(formAlert, error.message, "error");
-    } finally {
-        restoreButton();
+
+        const paymentMsg =
+            validateField(
+                paymentSelect.value,
+                "required"
+            );
+
+
+        setFieldError(
+            addressInput,
+            addressError,
+            addressMsg
+        );
+
+
+        setFieldError(
+            paymentSelect,
+            paymentError,
+            paymentMsg
+        );
+
+
+        if (
+            addressMsg ||
+            paymentMsg
+        ) {
+            return;
+        }
+
+
+        const restoreButton =
+            setLoading(
+                submitBtn,
+                "Procesando..."
+            );
+
+
+        try {
+
+            const result =
+                await checkout(
+                    cartId,
+                    {
+                        billingAddress:
+                            addressInput.value.trim(),
+
+                        paymentMethod:
+                            paymentSelect.value
+                    }
+                );
+
+
+            clearCartId();
+
+
+            window.location.href =
+                `purchase-complete.html?order_id=${encodeURIComponent(
+                    result.order_id
+                )}`;
+
+        } catch (error) {
+
+            showAlert(
+                formAlert,
+                error.message,
+                "error"
+            );
+
+        } finally {
+
+            restoreButton();
+        }
     }
-});
+);
 
-if (isLoggedIn() && cartId) {
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+
+if (
+    isLoggedIn() &&
+    cartId
+) {
     loadSummary();
 }

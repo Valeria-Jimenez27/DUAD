@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Carrito | Vale's Pet Store</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+
     <link
         href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap"
         rel="stylesheet" />
+
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -16,28 +20,45 @@
 </head>
 
 <body>
+
     <header class="site-header container">
+
         <a href="index.html" class="brand">
-            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo">
+            <img src="img/products/logo-header.jpg" alt="Vale's Pet Store" class="brand__logo" />
         </a>
+
         <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
             <a href="index.html">Inicio</a>
             <a href="catalog.html">Catálogo</a>
             <a href="index.html#footer-contact">Contacto</a>
         </nav>
-        <div class="flex-center" style="flex-direction: row; gap: var(--space-md);">
-            <a href="cart.html" class="icon-link is-active" aria-label="Ver carrito" title="Carrito">🛒</a>
-            <span class="user-status" id="user-status">Usuario: Invitado</span>
+
+        <div class="header-actions">
+
+            <a href="cart.html" class="icon-link is-active" aria-label="Ver carrito" title="Carrito">
+                🛒
+            </a>
+
+            <span class="user-status" id="user-status">
+                Usuario: Invitado
+            </span>
+
             <div class="auth-links" id="auth-links"></div>
+
         </div>
+
     </header>
 
-    <main class="section container" style="max-width: 60rem;">
-        <h1 style="margin-bottom: var(--space-lg);">Carrito de compras</h1>
+    <main class="section container cart-page">
+
+        <h1 class="cart-page__title">
+            Carrito de compras
+        </h1>
 
         <div id="access-restricted" hidden></div>
 
         <div id="page-content">
+
             <div id="api-error" class="alert alert--error" hidden></div>
 
             <div id="cart-loading" class="empty-state">
@@ -45,33 +66,51 @@
             </div>
 
             <div id="empty-cart" class="empty-state" hidden>
-                <div class="empty-state__icon" aria-hidden="true">📦</div>
+
+                <div class="empty-state__icon" aria-hidden="true">
+                    📦
+                </div>
+
                 <h2>Tu carrito está vacío</h2>
+
                 <p>Agrega productos desde el catálogo.</p>
-                <a href="catalog.html" class="btn btn--outline" style="margin-top: var(--space-md);">Ver productos</a>
+
+                <a href="catalog.html" class="btn btn--outline cart-empty__link">
+                    Ver productos
+                </a>
+
             </div>
 
             <div id="cart-content" class="cart-layout" hidden>
+
                 <div id="cart-items"></div>
 
                 <div class="summary-card">
-                    <div class="cart-summary" style="padding-top: 0;">
+
+                    <div class="cart-summary cart-summary--compact">
                         <span>Total</span>
                         <span id="cart-total">$0.00</span>
                     </div>
-                    <a href="order-summary.html" class="btn btn--primary btn--full" id="checkout-btn">Continuar al
-                        checkout</a>
-                    <a href="catalog.html" class="text-muted"
-                        style="display: block; text-align: center; margin-top: var(--space-md);">
+
+                    <a href="order-summary.html" class="btn btn--primary btn--full" id="checkout-btn">
+                        Continuar al checkout
+                    </a>
+
+                    <a href="catalog.html" class="text-muted cart-continue-link">
                         ← Seguir comprando
                     </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </main>
 
     <script type="module" src="js/header.js"></script>
     <script type="module" src="js/cart.js"></script>
+
 </body>
 
 </html>

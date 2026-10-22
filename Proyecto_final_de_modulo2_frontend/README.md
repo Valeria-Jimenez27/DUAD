@@ -1,389 +1,496 @@
-# Vale's Pet Store — Frontend (Proyecto_final_de_modulo2_frontend)
+# Vale's Pet Store — Frontend
 
-Vale's Pet Store is the web interface of the PetStore App. A customer can sign up, browse the catalog, build a cart, check out and view a receipt; an administrator can manage inventory, review sales and refund orders.
+**Project:** `Proyecto_final_de_modulo2_frontend`
 
-It is built with **HTML5, CSS3 and JavaScript (ES modules)**: no framework, no `npm` and no build step. Any folder served by a static HTTP server is a working application.
+Vale's Pet Store is the frontend for the PetStore application. Customers can create an account, sign in, browse products, manage a shopping cart, complete checkout, and view an invoice. Administrators can manage products, review orders, and request refunds.
 
-> ⚠️ The project ships in **demo mode** (`USE_MOCK_DATA = true` in `js/config.js`): no API is called and everything is simulated in the browser. See [Connecting to the backend](#connecting-to-the-backend) to switch it off.
+The application is built with **HTML5, CSS3, and vanilla JavaScript using ES modules**. It does not require `npm`, a JavaScript framework, or a build step.
+
+> **Current configuration:** the frontend is configured to use the real backend API. In `js/config.js`, `USE_MOCK_DATA` should remain `false` for the project demonstration.
+
+---
+
+## Contents
+
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Run the application](#run-the-application)
+- [Customer and administrator flows](#customer-and-administrator-flows)
+- [Project structure](#project-structure)
+- [Pages and access](#pages-and-access)
+- [Architecture](#architecture)
+- [Technology stack](#technology-stack)
+- [Authentication and session storage](#authentication-and-session-storage)
+- [Backend integration](#backend-integration)
+- [API operations used by the frontend](#api-operations-used-by-the-frontend)
+- [Data expected by the interface](#data-expected-by-the-interface)
+- [Error handling](#error-handling)
+- [Technical decisions](#technical-decisions)
+- [Known considerations](#known-considerations)
+- [Troubleshooting](#troubleshooting)
+- [Before the demonstration](#before-the-demonstration)
 
 ---
 
 ## Prerequisites
 
-- A modern browser (Chrome, Edge, Firefox, Safari): the app uses ES modules, `fetch` and `localStorage`.
-- A static HTTP server. Either of these works:
-  - [Python 3](https://www.python.org/downloads/) (`python -m http.server`)
-  - The [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) VS Code extension
-- Internet access for Google Fonts (Baloo 2 and Nunito Sans). Without it the app still works, using the system font.
+- A modern browser: Chrome, Edge, Firefox, or Safari.
+- Python 3 or the VS Code **Live Server** extension to serve the frontend over HTTP.
+- The backend API running at `http://127.0.0.1:5000`, unless `API_BASE_URL` has been changed.
+- The backend's required services and database configured according to the backend project's own README.
+- Internet access is needed to load Google Fonts (Baloo 2 and Nunito Sans). If they are unavailable, the browser uses fallback fonts.
 
-> Do not open the `.html` files by double-clicking them (`file://`). Browsers block ES modules over `file://`, and the pages will load without data and without clear errors.
+> Do not open the HTML files by double-clicking them. ES modules and browser requests should be tested through an HTTP server, not a `file://` URL.
 
 ---
 
 ## Installation
 
-**1. Clone the repository**
+Clone the repository and enter the frontend folder:
 
 ```bash
 git clone https://github.com/Valeria-Jimenez27/DUAD.git
 cd DUAD/Proyecto_final_de_modulo2_frontend
 ```
 
-**2. Install dependencies**
-
-There is nothing to install. The project has no `package.json`.
+There are no frontend packages to install. The project does not use `package.json` or a build command.
 
 ---
 
 ## Configuration
 
-All configuration lives in `js/config.js`:
+Frontend configuration is centralized in `js/config.js`.
 
-| Constant | Default | Purpose |
+| Setting | Current value | Purpose |
 |---|---|---|
-| `USE_MOCK_DATA` | `true` | `true` = demo mode (data simulated in the browser). `false` = every page calls the real API. |
-| `API_BASE_URL` | `"http://127.0.0.1:5000"` | Base URL used when `USE_MOCK_DATA` is `false`. |
+| `USE_MOCK_DATA` | `false` | Uses the real API when set to `false`; uses simulated data when set to `true`. |
+| `API_BASE_URL` | `http://127.0.0.1:5000` | Base URL for backend requests. |
 
-There are no `.env` files or secrets in the frontend: everything in this folder is public by definition.
+For the project demonstration, use the address where the backend is actually running. If the backend uses a different host or port, update `API_BASE_URL`.
+
+The frontend does not contain backend secrets. Anything included in frontend code is delivered to the browser and must be treated as public.
 
 ---
 
-## Usage
+## Run the application
 
-**Start the app**
+### 1. Start the backend
+
+Start the Flask backend using the instructions in the backend project's README. In the current local setup, the API base URL is:
+
+```text
+http://127.0.0.1:5000
+```
+
+Keep the backend terminal running while testing the frontend.
+
+### 2. Start the frontend
+
+From the frontend project directory, run:
 
 ```bash
-# from the project folder
 python -m http.server 8080
 ```
 
-Open `http://localhost:8080`.
+Alternatively, use the Live Server extension in Visual Studio Code.
 
-**Demo accounts** (demo mode does not validate passwords):
+### 3. Open the application
 
-| Email | Role |
-|---|---|
-| `admin@valespetstore.com` | `admin` (with any password) |
-| any other email with a valid format | `user` |
+With Python's server, open:
 
-**How demo mode behaves**
+```text
+http://localhost:8080
+```
 
-- The 8 initial products and the cart are stored in `localStorage`, so they survive reloads.
-- Every simulated call waits ~350 ms so that loading states are visible.
-- Simulated orders and invoices live only in memory and are lost when you change page (see [Known limitations](#known-limitations)).
-- To reset the demo: DevTools → *Application* → *Local Storage* → delete the app's keys, or run `localStorage.clear()` in the console.
+The frontend and backend use different origins when served this way. If the browser console reports a CORS error, configure the backend to allow the exact frontend origin, including its host and port. Do not change CORS settings unless needed; verify the browser console and backend configuration first.
 
-**Typical customer flow**
+### 4. Sign in
 
-1. `register.html` → creates the account and signs in.
-2. `catalog.html` → search, filter by category or availability, add products (`product.html` shows the detail).
-3. `cart.html` → review or remove products.
-4. `order-summary.html` → billing address and payment method (card, SINPE Móvil or cash).
-5. `purchase-complete.html` → receipt.
-
-**Typical admin flow**
-
-Sign in → `admin-panel.html` → *Inventario* tab (create, edit, delete products) and *Ventas* tab (view orders, refund).
+Use an account that exists in the backend. Demo-mode accounts are only relevant when `USE_MOCK_DATA` is set to `true`; they are not valid real API accounts unless the same accounts also exist in the backend database.
 
 ---
 
-## Project Structure
+## Customer and administrator flows
 
-```
+### Customer flow
+
+1. `register.html` — create a customer account.
+2. `login.html` — sign in.
+3. `catalog.html` — browse, search, and filter products.
+4. `product.html?id=...` — view a product's details and add it to the cart.
+5. `cart.html` — review or remove cart items.
+6. `order-summary.html` — enter the billing address and choose a payment method.
+7. `purchase-complete.html?order_id=...` — view the invoice for the completed order.
+
+The supported payment method values sent by the frontend are `tarjeta`, `sinpe`, and `efectivo`.
+
+### Administrator flow
+
+1. Sign in with an administrator account.
+2. Open `admin-panel.html`.
+3. Use the inventory area to create, edit, or delete products.
+4. Use the sales area to review orders and request refunds.
+5. Use `edit-product.html` to create a product or edit an existing product with `?id=...`.
+
+The backend must enforce administrator permissions. Hiding an admin page in the frontend is not a security boundary.
+
+---
+
+## Project structure
+
+```text
 Proyecto_final_de_modulo2_frontend/
 │
-├── index.html                # Home: hero, categories, contact
-├── login.html                # Sign in
-├── register.html             # Customer sign-up
-├── catalog.html              # Catalog with search and filters
-├── product.html              # Product detail (?id=)
-├── cart.html                 # Cart
-├── order-summary.html        # Billing address + payment method
-├── purchase-complete.html    # Receipt (?order_id=)
-├── admin-panel.html          # Inventory and sales (admin only)
-├── edit-product.html         # Create / edit product (?id= to edit)
+├── index.html                 # Home page
+├── login.html                 # Sign in
+├── register.html              # Customer registration
+├── catalog.html               # Product catalog and filters
+├── product.html               # Product details (?id=)
+├── cart.html                  # Shopping cart
+├── order-summary.html         # Billing address and payment
+├── purchase-complete.html     # Invoice (?order_id=)
+├── admin-panel.html           # Product inventory and sales
+├── edit-product.html          # Create/edit product (?id= to edit)
 │
 ├── css/
-│   ├── variables.css         # Design tokens: colors, typography, spacing
-│   ├── base.css              # Reset and global styles
-│   ├── layout.css            # Header, containers, grids
-│   └── components.css        # Buttons, cards, forms, tables, alerts
+│   ├── variables.css          # Design tokens: colors, typography, spacing
+│   ├── base.css               # Reset and global styles
+│   ├── layout.css             # Header, containers, grids
+│   └── components.css         # Buttons, cards, forms, tables, alerts
 │
 ├── js/
-│   ├── config.js             # USE_MOCK_DATA, API_BASE_URL, apiFetch(), ApiError
-│   ├── storage.js            # Only access point to localStorage (session, cart)
-│   ├── authService.js        # register(), login()
-│   ├── productService.js     # getProducts(), getProductById(), getBrands(), getCategories()
-│   ├── orderService.js       # cart, checkout, invoice
-│   ├── adminService.js       # create/edit/delete product, orders, refunds
-│   ├── mockData.js           # Simulated data source for demo mode
-│   ├── validators.js         # Regex validations (pure functions)
-│   ├── ui.js                 # Alerts, field errors, loading state, access-restricted screen
-│   ├── productImage.js       # Resolves each product's image
-│   ├── header.js             # Shared header: session, cart counter, search
-│   └── <page>.js             # One script per page: index, login, register, catalog,
-│                             #   product, cart, orderSummary, purchaseComplete,
-│                             #   adminPanel, editProduct
+│   ├── config.js              # API_BASE_URL, USE_MOCK_DATA, apiFetch(), ApiError
+│   ├── storage.js             # Session, customer, cart identifiers, mock cart storage
+│   ├── authService.js         # Registration and login requests
+│   ├── productService.js      # Product, brand, and category requests
+│   ├── orderService.js        # Cart, checkout, and invoice requests
+│   ├── adminService.js        # Product administration, orders, refunds
+│   ├── mockData.js             # Simulated data for demo mode
+│   ├── validators.js          # Reusable form validation
+│   ├── ui.js                  # Alerts, field errors, loading, restricted-access UI
+│   ├── productImage.js        # Product image selection
+│   ├── header.js              # Shared header behavior
+│   └── [page].js              # JavaScript module for each page
 │
-└── img/products/             # Logo, hero and product photos
+└── img/
+    └── products/              # Logo and product images
 ```
 
-Every HTML page loads the same four stylesheets (in the order above), `js/header.js`, and its own page script, all with `type="module"`.
+Each HTML page loads the shared stylesheets and `js/header.js`, along with its own page script, using `type="module"`.
 
 ---
 
-## Pages
+## Pages and access
 
-| Page | Access | Script | Services it uses |
+| Page | Access | Main script | Main operations |
 |---|---|---|---|
-| `index.html` | Public | `index.js` | `getProducts` (builds the category grid) |
-| `login.html` | Public (redirects if already signed in) | `login.js` | `login` |
-| `register.html` | Public (redirects if already signed in) | `register.js` | `register`, `login` |
-| `catalog.html` | Signed in | `catalog.js` | `getProducts`, `addItemToCart` |
-| `product.html` | Signed in | `product.js` | `getProductById`, `addItemToCart` |
-| `cart.html` | Signed in | `cart.js` | `getCart`, `removeItemFromCart` |
-| `order-summary.html` | Signed in | `orderSummary.js` | `getCart`, `checkout` |
-| `purchase-complete.html` | Signed in | `purchaseComplete.js` | `getInvoice` |
-| `admin-panel.html` | Admin | `adminPanel.js` | `getProducts`, `deleteProduct`, `getOrders`, `refundOrder` |
-| `edit-product.html` | Admin | `editProduct.js` | `getProductById`, `getBrands`, `getCategories`, `createProduct`, `updateProduct` |
+| `index.html` | Public | `index.js` | Home page and category/product presentation |
+| `login.html` | Public | `login.js` | Sign in |
+| `register.html` | Public | `register.js` | Registration and sign-in |
+| `catalog.html` | Signed-in user | `catalog.js` | Browse products and add items to cart |
+| `product.html` | Signed-in user | `product.js` | Product details and add to cart |
+| `cart.html` | Signed-in user | `cart.js` | View and remove cart items |
+| `order-summary.html` | Signed-in user | `orderSummary.js` | Review cart and complete checkout |
+| `purchase-complete.html` | Signed-in user | `purchaseComplete.js` | Retrieve and display invoice |
+| `admin-panel.html` | Administrator | `adminPanel.js` | Inventory and sales administration |
+| `edit-product.html` | Administrator | `editProduct.js` | Create or update a product |
 
-State that matters between pages travels in the URL (`?id=`, `?order_id=`, `?search=`, `?category=`) or in `localStorage` (session and cart id).
+Page-to-page state is passed through URL parameters such as `?id=`, `?order_id=`, `?search=`, and `?category=`, or through `localStorage` for the session and cart identifier.
 
 ---
 
 ## Architecture
 
-Every page follows the same path, and only in this direction:
+The frontend separates page behavior, service calls, and shared utilities:
 
+```text
+HTML page
+   |
+   v
+Page JavaScript module
+(DOM, events, display states)
+   |
+   v
+Service module
+(API operation or mock implementation)
+   |
+   v
+apiFetch() ------------------> Backend REST API
+   |
+   +---- mock implementation when USE_MOCK_DATA is true
 ```
-page.html ──► js/<page>.js ──► js/*Service.js ──► apiFetch() ──► API
- (structure)   (DOM, events)    (which endpoint)    (how)     └─► mockData.js (if USE_MOCK_DATA)
+
+- Page scripts handle DOM events and render loading, empty, success, and error states.
+- Service modules centralize operations such as authentication, products, carts, checkout, invoices, and administration.
+- `apiFetch()` centralizes HTTP requests, JSON serialization, authorization headers, and API error handling.
+- `storage.js` centralizes access to session and cart identifiers in `localStorage`.
+- `validators.js` contains reusable validation rules.
+- `ui.js` contains reusable interface helpers, including alerts and restricted-access messages.
+- `mockData.js` supplies simulated data only when demo mode is enabled.
+
+---
+
+## Technology stack
+
+| Technology | Purpose |
+|---|---|
+| HTML5 | Multi-page structure and semantic markup |
+| CSS3 | Responsive layout, design variables, and component styling |
+| JavaScript ES modules | Page logic and modular service layer |
+| Fetch API | HTTP communication with the backend |
+| `localStorage` | Session values, cart identifier, and demo data |
+| Google Fonts | Baloo 2 headings and Nunito Sans body text |
+| Flask REST API | Authentication, products, carts, orders, and invoices |
+| PostgreSQL and Redis | Backend data and caching, configured in the backend project |
+
+---
+
+## Authentication and session storage
+
+The frontend stores the authentication information returned by the backend and sends the token with protected API requests.
+
+1. After successful sign-in, `authService.js` saves session values using `storage.js`.
+2. `apiFetch()` adds an `Authorization: Bearer <token>` header when authentication is required and a token is available.
+3. Pages use client-side checks to decide whether to display protected content.
+4. Signing out clears the frontend session values and returns the user to the home page.
+
+The application uses these storage keys:
+
+| Key | Purpose |
+|---|---|
+| `petstore_token` | Authentication token |
+| `petstore_role` | Role used by the frontend to select the appropriate interface |
+| `petstore_user_name` | Display name, when available |
+| `petstore_customer_id` | Customer identifier associated with the account |
+| `petstore_cart_id` | Cart identifier used by the real API |
+| `petstore_mock_cart_items` | Cart items for demo mode |
+| `valespetstore_mock_products_v2` | Simulated product data, when used by the mock implementation |
+
+Client-side access checks are for user experience only. They can be changed in the browser and must not replace authorization checks on the backend.
+
+The token is stored in `localStorage`, which is convenient for this multi-page project but can expose the token if a cross-site scripting (XSS) vulnerability exists. Production systems should evaluate safer session designs and additional security controls.
+
+---
+
+## Backend integration
+
+The frontend connects to the Flask API project `Proyecto_final_de_modulo2`.
+
+### API base URL
+
+The current local API address is configured in `js/config.js`:
+
+```js
+export const API_BASE_URL = "http://127.0.0.1:5000";
+export const USE_MOCK_DATA = false;
 ```
 
-- Page scripts **never** call `fetch`: they call services and display `error.message`.
-- Services are the only files that know the endpoint paths and the `USE_MOCK_DATA` switch. Each function returns the same shape in both modes.
-- `apiFetch()` is the single place that builds headers, adds the token, parses JSON and translates errors.
-- `storage.js` is the only file that touches `localStorage` for the session and cart id.
-- `validators.js` and `ui.js` hold what forms share: validation rules and the helpers that show alerts, field errors and loading state.
+Set `USE_MOCK_DATA` to `false` when demonstrating the application with the real API. Change `API_BASE_URL` if the API is running at another address.
+
+### Authentication
+
+Protected requests use a Bearer token:
+
+```http
+Authorization: Bearer <token>
+```
+
+Sign in through the frontend to store the token before testing protected operations. Calling protected endpoints directly without a token may return an error such as `Token missing`.
+
+### CORS
+
+When the frontend and backend are served from different origins, the backend must allow the frontend origin. An origin includes the scheme, hostname, and port; for example, `http://localhost:8080` and `http://127.0.0.1:8080` are different origins.
+
+If the browser reports a CORS error, configure CORS in the backend for the origin actually used to open the frontend. CORS is a backend configuration, not a frontend setting.
+
+### Demo mode
+
+To use simulated data for isolated frontend demonstrations, set:
+
+```js
+export const USE_MOCK_DATA = true;
+```
+
+Demo mode is not the configuration for the real-backend demonstration. Mock behavior and persisted mock data may differ from the backend's actual data and business rules.
 
 ---
 
-## Tech Stack
+## API operations used by the frontend
 
-| Tool | Purpose |
+The following table documents the operations used by the frontend service layer. The API must be running, and protected requests require a valid token. Confirm exact request and response details against the backend implementation if either project changes.
+
+| Frontend operation | HTTP request | Purpose |
+|---|---|---|
+| `register()` | `POST /register` | Register an account |
+| `login()` | `POST /login` | Authenticate and obtain a token |
+| `getProducts()` | `GET /products` | Retrieve products |
+| `getProductById(id)` | `GET /products/{id}` | Retrieve one product |
+| `getBrands()` | `GET /brands` | Retrieve brands for product forms |
+| `getCategories()` | `GET /categories` | Retrieve categories for product forms |
+| `getOrCreateCart()` | `POST /carts` with `customer_id` | Create a cart when needed |
+| `getCart(cartId)` | `GET /carts/{cart_id}` | Retrieve cart contents |
+| `addItemToCart()` | `POST /carts/{cart_id}/items` with `product_id` and `quantity` | Add an item |
+| `removeItemFromCart()` | `DELETE /carts/{cart_id}/items/{item_id}` | Remove an item |
+| `checkout()` | `POST /carts/{cart_id}/checkout` with `billing_address` and `payment_method` | Complete a purchase |
+| `getInvoice(orderId)` | `GET /orders/{order_id}/invoice` | Retrieve an invoice |
+| `createProduct()` | `POST /products` | Create a product |
+| `updateProduct(id)` | `PUT /products/{id}` | Update a product |
+| `deleteProduct(id)` | `DELETE /products/{id}` | Delete a product |
+| `getOrders()` | `GET /orders` | Retrieve orders for the sales view |
+| `refundOrder(orderId)` | `POST /orders/{order_id}/refund` | Request an order refund |
+
+Authentication and authorization requirements are ultimately determined by the backend. Some lookup endpoints may be public while others require a token.
+
+---
+
+## Data expected by the interface
+
+The page scripts rely on response fields such as the following. If the backend response shape changes, update the relevant service or page code and keep the mock implementation aligned if demo mode is still supported.
+
+| Resource | Fields used by the frontend |
 |---|---|
-| Semantic HTML5 | One page per screen, `lang="es"`, `aria-*` on navigation and icons |
-| CSS3 | Custom properties, Flexbox/Grid, `rem`, no framework |
-| JavaScript (ES modules) | Per-page logic, no libraries or bundler |
-| Fetch API | Network calls, centralized in `apiFetch()` |
-| localStorage | Session (token, role), cart id and demo-mode data |
-| Google Fonts | Baloo 2 (headings) and Nunito Sans (body text) |
-
----
-
-## Authentication (client side)
-
-The frontend does not create or verify tokens; it stores and sends them:
-
-1. After a successful login, `login()` saves the `token`, `role` and `customer_id` in `localStorage`.
-2. `apiFetch()` adds `Authorization: Bearer <token>` to every request, except those marked `requiresAuth: false`.
-3. Each protected page checks `isLoggedIn()` / `isAdmin()` on load. If the check fails it hides the content and shows the "Debes iniciar sesión" ("You must sign in") or "No tienes permisos de administrador" ("You don't have admin permissions") screen (`renderAccessRestricted()` in `ui.js`).
-4. "Cerrar sesión" (sign out) clears every app key and returns to `index.html`.
-
-`localStorage` keys: `petstore_token`, `petstore_role`, `petstore_user_name`, `petstore_customer_id`, `petstore_cart_id` (real session) and `petstore_mock_cart_items`, `valespetstore_mock_products_v2` (demo only).
-
-These guards are a usability feature, not security: the role lives in `localStorage` and can be edited in the browser. Anything that must be protected has to be enforced by the API.
-
----
-
-## Connecting to the backend
-
-The frontend talks to a REST API (the `Proyecto_final_de_modulo2` project). This is the only section that depends on it.
-
-### Switching from demo mode to the real API
-
-1. **Run the API** following its own README (default address `http://127.0.0.1:5000`).
-2. **Allow the frontend's origin (CORS) on the API.** The frontend is served from another origin (e.g. `localhost:8080`) and sends an `Authorization` header plus JSON, so the browser sends a preflight `OPTIONS` request first. The API does not currently configure CORS, so every call is blocked until it does. With Flask:
-
-   ```bash
-   pip install flask-cors     # and add it to the API's requirements.txt
-   ```
-
-   ```python
-   from flask_cors import CORS
-
-   app = Flask(__name__)
-   CORS(app, origins=["http://localhost:8080", "http://127.0.0.1:8080"])
-   ```
-
-   The allowed origin must match exactly how you serve the frontend, port included.
-3. **Turn demo mode off** in `js/config.js`:
-
-   ```js
-   export const USE_MOCK_DATA = false;
-   ```
-
-   Change `API_BASE_URL` if the API runs elsewhere.
-4. Serve the frontend (`python -m http.server 8080`) and sign in with an account that exists in the API.
-
-### Endpoints the frontend calls
-
-| Frontend function | Request | Auth | Used in |
-|---|---|---|---|
-| `register()` | `POST /register`, then `POST /customers` | Public | `register.html` |
-| `login()` | `POST /login` | Public | `login.html`, `register.html` |
-| `getProducts()` | `GET /products` | User | home, catalog, admin panel |
-| `getProductById()` | `GET /products/{id}` | User | detail, edit product |
-| `getBrands()` / `getCategories()` | `GET /brands`, `GET /categories` | Public | product form |
-| `getOrCreateCart()` | `POST /carts` `{customer_id}` | User | first "add to cart" |
-| `getCart()` | `GET /carts/{cart_id}` | User | cart, order summary |
-| `addItemToCart()` | `POST /carts/{cart_id}/items` `{product_id, quantity}` | User | catalog, detail |
-| `removeItemFromCart()` | `DELETE /carts/{cart_id}/items/{item_id}` | User | cart |
-| `checkout()` | `POST /carts/{cart_id}/checkout` `{billing_address, payment_method}` | User | order summary |
-| `getInvoice()` | `GET /orders/{id}/invoice` (reads the `invoice` key) | User | receipt |
-| `createProduct()` | `POST /products` | Admin | `edit-product.html` |
-| `updateProduct()` | `PUT /products/{id}` | Admin | `edit-product.html` |
-| `deleteProduct()` | `DELETE /products/{id}` | Admin | admin panel |
-| `getOrders()` | `GET /orders` | Admin | admin panel (sales) |
-| `refundOrder()` | `POST /orders/{id}/refund` | Admin | admin panel (sales) |
-
-### Data the UI expects
-
-If the API renames any of these fields, update the pages that read them (and `mockData.js`, which mimics them):
-
-| Resource | Fields the frontend reads |
-|---|---|
-| Product | `product_id`, `name`, `price`, `quantity`, `brand` (name), `category` (name) |
-| Brand / category | `brand_id`, `brand_name` / `category_id`, `category_name` |
-| Cart | `items[]` with `cart_item_id`, `product_id`, `product_name`, `unit_price`, `quantity`, `subtotal`; and `total` |
+| Product | `product_id`, `name`, `price`, `quantity`, `brand`, `category` |
+| Brand | `brand_id`, `brand_name` |
+| Category | `category_id`, `category_name` |
+| Cart | `items`, `total` |
+| Cart item | `cart_item_id`, `product_id`, `product_name`, `unit_price`, `quantity`, `subtotal` |
 | Checkout result | `order_id` |
-| Invoice | `order_id`, `order_date`, `items[]`, `total_amount`, `billing_address`, `payment_method` |
-| Order (admin) | `order_id`, `customer_id`, `order_date`, `total_amount`, `status` (`completed`, `refunded`, `pending`) |
-| Login result | `token`, `role`, `customer_id` |
-| Errors | `{ "error": "message" }`, shown to the user as-is |
+| Invoice | `order_id`, `order_date`, `items`, `total_amount`, `billing_address`, `payment_method` |
+| Order | `order_id`, `customer_id`, `order_date`, `total_amount`, `status` |
+| Login result | `token`, `role`, and the customer identifier when returned |
+| API error | An error message, commonly in an `error` field |
 
-The payment form sends `tarjeta`, `sinpe` or `efectivo` as `payment_method`.
-
-### Errors
-
-`apiFetch()` throws an `ApiError` (`message`, `status`):
-
-- No response → `"No se pudo conectar con el servidor. Intenta de nuevo."` ("Could not connect to the server. Try again."), `status 0`.
-- Non-success response → the `error` text from the API, or a generic message if there is none.
-
-Each page catches it and shows it in its own alert container.
-
-### Things that behave differently against the real API
-
-- **Registration is two requests.** The API keeps the login account and the customer profile separate and links them by email, so `register()` sends the same email in both calls. If the second call fails, the account exists but cannot add products to a cart.
-- **Product images.** The API has no image field: the frontend sends `image` when saving a product, but it is not stored. Images are resolved in `productImage.js` (see below).
-- **Brand and category arrive as names**, not ids, so `edit-product.html` matches them by name to preselect the dropdowns.
-- **Token lifetime is 2 hours.** The frontend does not redirect on an expired token; the user sees the error message and must sign in again.
+The exact response shape is defined by the backend. If a value is missing or named differently, inspect the network response and update the relevant service mapping rather than assuming the field exists.
 
 ---
 
-## Technical decisions and rationale
+## Error handling
 
-**1. Plain HTML, CSS and JavaScript: no framework, no bundler.**
-The scope is a small store and the goal is to master web fundamentals. With no build step, anyone can clone and run it in a minute and there are no dependencies to maintain. *Cost:* more manual DOM code and no reusable components (the header markup is repeated in each HTML file). If the project grows, the service layer can be reused as-is in React or Vue.
+`apiFetch()` is the shared HTTP request helper. It serializes request bodies as JSON, sends the authorization header when required, parses JSON responses, and throws an `ApiError` for failed requests.
 
-**2. Multi-page application: one HTML + one JS file per screen.**
-Each screen is independent and easy to locate, and URL parameters make pages reloadable and shareable. *Cost:* every navigation is a full reload, which is why session and cart ids live in `localStorage`.
+Typical issues include:
 
-**3. ES modules (`type="module"`).**
-Explicit imports, no globals, one responsibility per file. *Cost:* an HTTP server is required even in development.
+- **Connection failure:** the backend is stopped or `API_BASE_URL` is incorrect.
+- **Authentication failure:** the token is missing, invalid, or expired.
+- **Authorization failure:** the current account does not have permission for the operation.
+- **Validation failure:** required data is missing or does not meet the backend's rules.
+- **CORS failure:** the backend does not allow the origin used by the frontend.
 
-**4. Service layer + a single `apiFetch()`.**
-Base URL, headers, token and error translation live in one place, so changing the API touches `config.js` and the services, not the ten pages.
-
-**5. Demo mode through a flag, not a fake server.**
-`USE_MOCK_DATA` lets the whole app run with nothing else installed, without adding tools such as json-server or MSW. Simulated responses use the same field names as the real ones, so pages cannot tell the modes apart. *Cost:* the mock can drift from the API and must be updated with it; and the flag is edited by hand, so **turn it off for production.**
-
-**6. Token in `localStorage`.**
-The API expects a Bearer token in a header, and `localStorage` is the simplest way to keep it across pages. *Cost:* an XSS could read it. An `httpOnly` cookie would be safer but needs changes on the API side. The risk was accepted for the project's scope (see limitation 7).
-
-**7. Access checks in the client are UX only.**
-They avoid showing screens a user cannot use; they do not protect anything (see [Authentication](#authentication-client-side)).
-
-**8. Regex form validation in `validators.js`.**
-Pure functions (value → message or `null`), reused by every form and independent of the DOM, for immediate feedback. Password rule: at least 8 characters with a letter and a number. This rule exists only in the frontend.
-
-**9. Catalog filtering in the browser.**
-The product list is downloaded once and filtered in memory (text, category, available only), normalizing accents and case. Simple and fast for a small catalog. *Cost:* it does not scale to thousands of products; then paginate and filter on the server.
-
-**10. Product images resolved on the client (`productImage.js`).**
-Order of precedence: the product's own `image` / `imageUrl`, then a map by product id (1 to 8), then a default image. It is a stopgap until images are stored by the API.
-
-**11. CSS in four layers with variables.**
-`variables.css` → `base.css` → `layout.css` → `components.css`, in cascade order. Colors, typography and spacing are design tokens (pastel palette, lilac accent), so a rebrand is a one-file change. It uses `rem`, breakpoints at `48rem` and `30rem`, and honors `prefers-reduced-motion`.
-
-**12. Explicit states on every screen.**
-Each page defines loading, empty, no-results and error states, and disables buttons during a request (`setLoading`) to prevent double submits.
-
-**13. Spanish UI (es-CR), English code.**
-The audience is Costa Rican (`es-CR` dates, SINPE Móvil). Identifiers are in English and comments in Spanish.
+Page scripts catch request errors and display a message in the page's alert area. The API remains the authority for business rules, stock, and permissions.
 
 ---
 
-## Known limitations
+## Technical decisions
 
-Ordered by impact.
+### 1. Vanilla HTML, CSS, and JavaScript
 
-1. **Receipt in demo mode.** `mockInvoices` and `mockOrders` (`js/mockData.js`) are in-memory variables. Going from `order-summary.html` to `purchase-complete.html` reloads the page and they are lost, so the receipt shows "Factura no encontrada." ("Invoice not found."). In the demo's *Sales* tab only the initial order persists and refunds are not kept. Fix: store them in `localStorage`, as products already are.
-2. **Cart counter with the real API.** `header.js` counts items with `getLocalCartItems()`, which only demo mode fills, so the counter stays at 0 in real mode. Fix: after adding or removing items, call `getCart()` and emit the `cart-updated` event with the count.
-3. **Broken images for ids above 8.** The image map covers ids 1 to 8, and the default image (`img/products/img-1.jpg`) does not exist in the repository. Any other product renders a broken image.
-4. **Home page for signed-out visitors in real mode.** `index.js` builds the categories from `GET /products`, which requires a token, so a visitor without a session sees "No fue posible cargar las categorías." ("Could not load categories."). Fix: use `getCategories()`, which is public.
-5. **Visible name.** The header shows the email ("Usuario: email@…") because the login response has no name.
-6. **Category icons.** `index.js` matches icons by exact name (`alimento`, `farmacia`…), but the actual category names are longer ("Alimento para Perros"), so every category gets the default icon (🐾).
-7. **Unescaped HTML.** `catalog.js`, `cart.js`, `adminPanel.js`, `orderSummary.js` and `purchaseComplete.js` build markup with `innerHTML` using values exactly as received. With real data, a product name containing HTML would execute, and the token in `localStorage` would be exposed. Only `index.js` has an `escapeHtml()`; move it to `ui.js` and use it everywhere (or use `textContent`).
-8. **Demo data differs from real data.** The demo has 8 products with Spanish category names; the real catalog may have more products with different names.
+The project demonstrates core frontend concepts without a framework, bundler, or dependency installation. The trade-off is that DOM rendering and shared markup require more manual maintenance.
+
+### 2. Multi-page structure
+
+Each screen has its own HTML page and JavaScript module. This makes each feature easy to locate, but navigation reloads the page. Session and cart identifiers are therefore stored between page loads.
+
+### 3. ES modules
+
+Imports and exports make dependencies explicit and keep code organized by responsibility. The application must be served through HTTP for modules to load reliably.
+
+### 4. Service layer and shared request helper
+
+Service modules separate API operations from page presentation. `apiFetch()` centralizes headers, JSON handling, and errors so request behavior is consistent.
+
+### 5. Optional demo mode
+
+`USE_MOCK_DATA` supports simulated data for frontend development. Mock data should be kept consistent with the API, but the real-backend demonstration should use `USE_MOCK_DATA = false`.
+
+### 6. Token storage
+
+The token is stored in `localStorage` to persist across page navigation. This is simple for a learning project but requires careful attention to XSS prevention; frontend role checks do not secure backend resources.
+
+### 7. Client-side form validation
+
+Reusable validation functions provide immediate feedback. The backend must validate submitted data independently because client-side validation can be bypassed.
+
+### 8. Client-side catalog filtering
+
+The frontend filters the loaded product list in the browser. This is appropriate for a small catalog; larger catalogs may require server-side filtering and pagination.
+
+### 9. Product image mapping
+
+The API product model may not provide an image path. `productImage.js` selects an image using the available product information and configured image mapping. Keep the mapping aligned with the product data and the actual files in `img/products/`.
+
+### 10. Layered CSS
+
+Styles are split into variables, base styles, layout, and components. This keeps design tokens and shared presentation rules in predictable locations.
+
+### 11. Explicit interface states
+
+Pages provide loading, empty, error, and restricted-access states where applicable. Buttons are disabled during some asynchronous operations to reduce accidental repeated submissions.
+
+### 12. Spanish interface
+
+The interface is designed for a Costa Rican audience, including SINPE Móvil as a payment option. Code identifiers are primarily in English while user-facing text is in Spanish.
 
 ---
 
-## How to extend the project
+## Known considerations
 
-**Add a new API call**
+The following are items to verify during testing; they should not be treated as confirmed failures without reproducing them in the current version.
 
-1. Create the function in the appropriate service, with its `if (USE_MOCK_DATA)` branch.
-2. Add the simulated version in `mockData.js`, with the same fields the API would return.
-3. Call it from the page script; do not use `fetch` directly.
+1. **Cart counter in real mode:** verify that the shared header displays the correct count after adding or removing items when using the real API.
+2. **Product images:** verify that every product currently returned by the API has a valid image mapping or a working fallback image.
+3. **Home page without a session:** verify that public home-page content loads correctly for signed-out visitors. Public content should not depend on an endpoint that requires authentication.
+4. **Displayed user name:** verify whether the login response provides a name. If it does not, the header may display the email instead.
+5. **Category icons:** verify that icon selection matches the category names returned by the backend.
+6. **Dynamic HTML:** any values received from the API and inserted into `innerHTML` must be escaped or rendered safely to prevent HTML injection and possible XSS.
+7. **Expired sessions:** verify how the interface responds when the token expires. Users may need to sign in again.
+8. **Demo invoices:** mock orders and invoices may have different persistence behavior from real backend orders. Test invoice retrieval with the real API for the project demonstration.
 
-**Add a new page**
-
-1. Copy an existing page and keep the four `<link>` stylesheets in order.
-2. Load `js/header.js` and the page's own script with `type="module"`.
-3. If the page is private, repeat the access block (`isLoggedIn()` / `isAdmin()` + `renderAccessRestricted()`).
-
-**Add or change a form**
-
-Reuse `validateField()` from `validators.js` and the helpers in `ui.js` (`setFieldError`, `showAlert`, `setLoading`). Add new rules to `validators.js`, not inside the page script.
-
-**Before deploying**
-
-- [ ] `USE_MOCK_DATA = false` and `API_BASE_URL` pointing to the real API (HTTPS).
-- [ ] The API's CORS restricted to the frontend's real domain.
-- [ ] Dynamic HTML escaped (limitation 7).
-- [ ] Cart counter and images fixed (limitations 2 and 3).
+If an issue is reproduced, update this section to record the actual behavior and the implemented fix.
 
 ---
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
+| Symptom | Possible cause | What to check |
 |---|---|---|
-| Page with no data, module errors in the console | HTML opened via `file://` | Serve the folder with an HTTP server |
-| Console: `blocked by CORS policy` | The API does not allow this origin | See step 2 of [Switching from demo mode to the real API](#switching-from-demo-mode-to-the-real-api); the origin must include the port |
-| "No se pudo conectar con el servidor" | API not running or `API_BASE_URL` is wrong | Check that the API answers at the configured URL |
-| "Tu cuenta no tiene un perfil de cliente asociado" ("Your account has no associated customer profile") | The login response has no `customer_id` | The account needs a customer profile with the same email |
-| "Invalid token" or "Token missing" | Token expired (2 h) or session cleared | Sign out and sign in again |
-| Demo shows odd or outdated data | `localStorage` holds data from an older version | `localStorage.clear()` and reload |
-| Product with a broken image | Product id outside 1 to 8 | See limitation 3 |
+| JavaScript module errors or pages do not load correctly | The HTML page was opened with `file://` | Start an HTTP server and open the `http://localhost:8080` address |
+| "No se pudo conectar con el servidor" | Backend is stopped or API URL is wrong | Check that Flask is running and `API_BASE_URL` matches its address |
+| Browser console reports a CORS error | Backend does not allow the frontend origin | Allow the exact origin and port in the backend CORS configuration |
+| `Token missing` | The request did not include an authentication token | Sign in through the frontend and retry the protected operation |
+| Invalid or expired token | The session token is no longer valid | Sign in again |
+| Product or cart request returns an error | The request may be unauthorized, the identifier may be invalid, or the backend may reject the data | Inspect the Network tab and the backend terminal for the response details |
+| Product image is broken | The image path or product image mapping does not match an existing file | Check `js/productImage.js` and the contents of `img/products/` |
+| Demo data looks outdated | Browser storage contains mock data from an earlier run | In demo mode only, clear the relevant application keys from DevTools → Application → Local Storage |
+| Invoice is not displayed | The order ID may be missing or the API may not return the expected invoice structure | Check the `order_id` URL parameter and the invoice request in the Network tab |
+
+Use browser DevTools (Console, Network, and Application/Local Storage) alongside the backend terminal when diagnosing a failure.
+
+---
+
+## Before the demonstration
+
+- [ ] The backend and its required services are running.
+- [ ] `USE_MOCK_DATA = false` in `js/config.js`.
+- [ ] `API_BASE_URL` points to the running backend.
+- [ ] The frontend is served over HTTP.
+- [ ] The browser console has no blocking module or CORS errors.
+- [ ] A real account can register or sign in successfully.
+- [ ] The catalog loads data from the backend.
+- [ ] Adding an item updates the cart.
+- [ ] Removing an item updates the cart and total.
+- [ ] Checkout creates an order and handles stock correctly.
+- [ ] The completion page retrieves and displays the invoice.
+- [ ] An administrator can manage products and view orders.
+- [ ] Refund behavior is checked against the backend response.
+- [ ] Product images are checked against the current API product list.
+- [ ] Backend authorization protects administrative and customer operations.
 
 ---
 
 ## Notes
 
-- Without a session only the home page, sign-in and sign-up are reachable; the catalog, product detail, cart and checkout redirect to a "sign in" screen.
-- `localStorage` keys start with `petstore_` or `valespetstore_`; deleting them resets the app without affecting other sites.
-- Stock is managed by the API (decremented on checkout, restored on refund). The frontend only reflects it visually ("Sin stock" button, maximum quantity).
-- Keep this README and `js/mockData.js` in sync with the API whenever its responses change.
+- Without a session, public pages such as the home page, sign-in, and registration should remain accessible. Protected pages should show the appropriate sign-in or access-restricted message.
+- Clearing frontend `localStorage` removes local session values and may reset demo data; it does not delete records from the backend database.
+- Product stock and purchase outcomes are managed by the backend. The frontend displays returned values and validation feedback.
+- Keep this README synchronized with the actual API contracts and the frontend code as the project evolves.

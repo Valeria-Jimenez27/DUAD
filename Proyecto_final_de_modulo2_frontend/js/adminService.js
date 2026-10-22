@@ -1,7 +1,5 @@
-import {
-    apiFetch,
-    USE_MOCK_DATA
-} from "./config.js";
+
+import { apiFetch, USE_MOCK_DATA } from "./config.js";
 
 import {
     mockCreateProduct,
@@ -11,47 +9,68 @@ import {
     mockRefundOrder
 } from "./mockData.js";
 
+/**
+ * Valida que un identificador sea un entero positivo.
+ */
+function validateId(id, description = "identificador") {
+    const numericId = Number(id);
 
+    if (!Number.isInteger(numericId) || numericId <= 0) {
+        throw new Error(`El ${description} no es válido.`);
+    }
+
+    return numericId;
+}
+
+/**
+ * Crea un producto.
+ */
 export async function createProduct({
     name,
     price,
     quantity,
     brandId,
-    categoryId,
-    image
+    categoryId
 }) {
-
-    if (USE_MOCK_DATA) {
-
-        return mockCreateProduct({
-            name,
-            price,
-            quantity,
-            brandId,
-            categoryId,
-            image
-        });
+    if (!String(name ?? "").trim()) {
+        throw new Error("Ingresa el nombre del producto.");
     }
 
+    if (!Number.isFinite(Number(price)) || Number(price) <= 0) {
+        throw new Error("El precio debe ser mayor que cero.");
+    }
 
-    return apiFetch(
-        "/products",
-        {
-            method: "POST",
+    if (!Number.isInteger(Number(quantity)) || Number(quantity) < 0) {
+        throw new Error("La cantidad debe ser un entero igual o mayor que cero.");
+    }
 
-            body: {
-                name,
-                price,
-                quantity,
-                brand_id: brandId,
-                category_id: categoryId,
-                image
-            }
+    const productData = {
+        name: String(name).trim(),
+        price: Number(price),
+        quantity: Number(quantity),
+        brandId: validateId(brandId, "identificador de marca"),
+        categoryId: validateId(categoryId, "identificador de categoría")
+    };
+
+    if (USE_MOCK_DATA) {
+        return mockCreateProduct(productData);
+    }
+
+    return apiFetch("/products", {
+        method: "POST",
+        body: {
+            name: productData.name,
+            price: productData.price,
+            quantity: productData.quantity,
+            brand_id: productData.brandId,
+            category_id: productData.categoryId
         }
-    );
+    });
 }
 
-
+/**
+ * Actualiza un producto existente.
+ */
 export async function updateProduct(
     id,
     {
@@ -59,91 +78,89 @@ export async function updateProduct(
         price,
         quantity,
         brandId,
-        categoryId,
-        image
+        categoryId
     }
 ) {
+    const productId = validateId(id, "identificador del producto");
 
-    if (USE_MOCK_DATA) {
-
-        return mockUpdateProduct(
-            id,
-            {
-                name,
-                price,
-                quantity,
-                brandId,
-                categoryId,
-                image
-            }
-        );
+    if (!String(name ?? "").trim()) {
+        throw new Error("Ingresa el nombre del producto.");
     }
 
-
-    return apiFetch(
-        `/products/${id}`,
-        {
-            method: "PUT",
-
-            body: {
-                name,
-                price,
-                quantity,
-                brand_id: brandId,
-                category_id: categoryId,
-                image
-            }
-        }
-    );
-}
-
-
-export async function deleteProduct(
-    id
-) {
-
-    if (USE_MOCK_DATA) {
-        return mockDeleteProduct(id);
+    if (!Number.isFinite(Number(price)) || Number(price) <= 0) {
+        throw new Error("El precio debe ser mayor que cero.");
     }
 
-    return apiFetch(
-        `/products/${id}`,
-        {
-            method: "DELETE"
+    if (!Number.isInteger(Number(quantity)) || Number(quantity) < 0) {
+        throw new Error("La cantidad debe ser un entero igual o mayor que cero.");
+    }
+
+    const productData = {
+        name: String(name).trim(),
+        price: Number(price),
+        quantity: Number(quantity),
+        brandId: validateId(brandId, "identificador de marca"),
+        categoryId: validateId(categoryId, "identificador de categoría")
+    };
+
+    if (USE_MOCK_DATA) {
+        return mockUpdateProduct(productId, productData);
+    }
+
+    return apiFetch(`/products/${productId}`, {
+        method: "PUT",
+        body: {
+            name: productData.name,
+            price: productData.price,
+            quantity: productData.quantity,
+            brand_id: productData.brandId,
+            category_id: productData.categoryId
         }
-    );
+    });
 }
 
+/**
+ * Elimina un producto.
+ */
+export async function deleteProduct(id) {
+    const productId = validateId(id, "identificador del producto");
 
+    if (USE_MOCK_DATA) {
+        return mockDeleteProduct(productId);
+    }
+
+    return apiFetch(`/products/${productId}`, {
+        method: "DELETE"
+    });
+}
+
+/**
+ * Obtiene los pedidos.
+ */
 export async function getOrders() {
-
     if (USE_MOCK_DATA) {
         return mockGetOrders();
     }
 
-    return apiFetch(
-        "/orders",
-        {
-            method: "GET"
-        }
-    );
+    return apiFetch("/orders", {
+        method: "GET"
+    });
 }
 
-
-export async function refundOrder(
-    orderId
-) {
+/**
+ * Solicita el reembolso de un pedido.
+ */
+export async function refundOrder(orderId) {
+    const numericOrderId = validateId(
+        orderId,
+        "identificador del pedido"
+    );
 
     if (USE_MOCK_DATA) {
-        return mockRefundOrder(
-            orderId
-        );
+        return mockRefundOrder(numericOrderId);
     }
 
-    return apiFetch(
-        `/orders/${orderId}/refund`,
-        {
-            method: "POST"
-        }
-    );
+    return apiFetch(`/orders/${numericOrderId}/refund`, {
+        method: "POST"
+    });
 }
